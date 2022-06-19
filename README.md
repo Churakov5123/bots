@@ -1,4 +1,5 @@
 <h3>Запуск проекта:</h3>
+<p>запустить в корне проекта выполнить cp .env.local .env , в дериктории для докера cp ./docker .env.local ./docker .env</p>
 <p>docker-compose up -d --build ( потом docker-compose start/stop )</p>
 <p>docker exec -it bots_php-fpm_1 bash (в контейнере запустить composer install)</p>
 
