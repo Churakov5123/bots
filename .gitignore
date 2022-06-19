@@ -1,0 +1,32 @@
+/.idea/
+###> symfony/framework-bundle ###
+/docker/.env
+/docker/mysql/data
+/docker/rabbitmq/data
+/docker/rabbitmq/log
+/.env.local.php
+/.env
+/config/secrets/prod/prod.decrypt.private.php
+/public/bundles/
+/var/*
+/var/cache/*
+/var/log/*
+/vendor/
+###< symfony/framework-bundle ###
+
+###> phpunit/phpunit ###
+/phpunit.xml
+.phpunit.result.cache
+###< phpunit/phpunit ###
+
+###> symfony/phpunit-bridge ###
+.phpunit.result.cache
+/phpunit.xml
+###< symfony/phpunit-bridge ###
+
+###> symfony/webpack-encore-bundle ###
+/node_modules/
+/public/build/
+npm-debug.log
+yarn-error.log
+###< symfony/webpack-encore-bundle ###

@@ -1,0 +1,8 @@
+parameters:
+    clients_check_limit: 100
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false

@@ -1,0 +1,80 @@
+version: "3.0"
+services:
+    db:
+        image: 'mariadb:10.3'
+        restart: always
+        command: --default-authentication-plugin=mysql_native_password
+        networks:
+            - internal
+        env_file: ./docker/.env
+        environment:
+            - MYSQL_DATABASE=${DOCKER_DB_DATABASE}
+            - MYSQL_USER=${DOCKER_DB_USERNAME}
+            - MYSQL_PASSWORD=${DOCKER_DB_PASSWORD}
+            - MYSQL_ROOT_PASSWORD=${DOCKER_DB_PASSWORD}
+        volumes:
+            - ./docker/mysql/data:/var/lib/mysql
+    phpmyadmin:
+        image: phpmyadmin
+        restart: always
+        ports:
+            - 8080:80
+        environment:
+            - PMA_ARBITRARY=1
+        networks:
+            - internal
+    cache:
+        image: redis
+        networks:
+            - internal
+    rabbitmq3:
+        container_name: "rabbitmq"
+        image: rabbitmq:3.8-management-alpine
+        env_file: ./docker/.env
+        environment:
+            - RABBITMQ_DEFAULT_USER=${DOCKER_RABBITMQ_DEFAULT_USER}
+            - RABBITMQ_DEFAULT_PASS=${DOCKER_RABBITMQ_DEFAULT_PASS}
+        ports:
+            # AMQP protocol port
+            - '5672:5672'
+            # HTTP management UI
+            - '15672:15672'
+        volumes:
+            - ./docker/rabbitmq/data/:/var/lib/rabbitmq/
+            - ./docker/rabbitmq/log/:/var/log/rabbitmq
+        networks:
+            - internal
+    php-fpm:
+        build:
+            context: docker/php-fpm
+        volumes:
+            - ./:/var/www
+        environment:
+            XDEBUG_CONFIG: "remote_host=192.168.220.1 remote_enable=1"
+            PHP_IDE_CONFIG: "serverName=Docker"
+        depends_on:
+            - db
+            - cache
+        networks:
+            - internal
+    nginx:
+        build:
+            context: docker/nginx
+        volumes:
+            - ./:/var/www/
+            - ./storage/app/public/:/var/www/public/storage/
+        ports:
+            - 80:80
+        depends_on:
+            - php-fpm
+        networks:
+            - internal
+networks:
+    internal:
+        driver: bridge
+        ipam:
+            driver: default
+            config:
+                -   subnet: 192.168.220.0/28
+
+
