@@ -4,7 +4,7 @@
 <p>docker exec -it bots_php-fpm_1 bash (в контейнере запустить composer install)</p>
 
 <h4>Примечание:</h4> 
-<p>обновление зависимостей для проекта запускать только в контейнере, равно как и Symfony console.</p>
+<p>обновление зависимостей для проекта запускать только в контейнере, равно как и Symfony console, статический анализатор и тд</p>
 
 <h3>Стек технологий:</h3>
 <p>Language: PHP 8.1.7/Framework:Symfony: "6.1"/DB:Mariadb:10.3/Cache:Redis/Queues:RabbitMQ</p>
@@ -13,5 +13,6 @@
 
 <h3>Проект бот знакомств</h3>
 <p>bots/src/Bots  (реализован в виде модульной структуры, с использование подхода слоевой архитектуры)</p>
-
-
+<h3>Проверка кодовой базы : запуск CS Fixer и статического анализатора</h3>
+<p>./vendor/bin/php-cs-fixer fix src</p>
+<p>./vendor/bin/phpstan analyse  src</p>

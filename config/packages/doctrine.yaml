@@ -12,8 +12,9 @@ doctrine:
         mappings:
             App:
                 is_bundle: false
-                dir: '%kernel.project_dir%/src/Entity'
-                prefix: 'App\Entity'
+                type: annotation
+                dir: '%kernel.project_dir%/src/Bot/Dating/Data/Entity'
+                prefix: 'App\Bot\Dating\Data\Entity'
                 alias: App
 
 when@test:

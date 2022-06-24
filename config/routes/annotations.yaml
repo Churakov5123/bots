@@ -1,0 +1,9 @@
+# config/routes/annotations.yaml
+controllers:
+  resource: ../../src/Bot/Dating/Api/V1/Controller/
+  type: annotation
+  prefix: /api/V1
+
+kernel:
+  resource: ../../src/Kernel.php
+  type: annotation
