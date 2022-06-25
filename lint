@@ -1,0 +1,7 @@
+#!/bin/bash
+# This is a comment
+echo "Start ...."
+./vendor/bin/php-cs-fixer fix src
+./vendor/bin/phpstan analyse  src
+echo "End ...."
+

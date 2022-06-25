@@ -15,5 +15,6 @@
 <p>Идея проекта: https://miro.com/app/board/uXjVOvdvz3k=/</p>
 <p>bots/src/Bots  (реализован в виде модульной структуры, с использование подхода слоевой архитектуры)</p>
 <h3>Проверка кодовой базы : запуск CS Fixer и статического анализатора</h3>
+<p>Запустить батник ./lint или команды из списка ниже</p>
 <p>./vendor/bin/php-cs-fixer fix src</p>
 <p>./vendor/bin/phpstan analyse  src</p>
