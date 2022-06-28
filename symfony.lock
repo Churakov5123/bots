@@ -301,8 +301,5 @@
         "files": [
             "config/packages/messenger.yaml"
         ]
-    },
-    "twig/extra-bundle": {
-        "version": "v3.4.0"
     }
 }
