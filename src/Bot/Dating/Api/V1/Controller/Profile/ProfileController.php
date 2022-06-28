@@ -24,12 +24,12 @@ class ProfileController extends AbstractController
     }
 
     /**
-     * @Route("/", methods={"POST"})
+     * @Route("/create", methods={"POST"})
      */
     public function create(Request $request): JsonResponse
     {
         return JsonResponse::fromJsonString(
-            $this->serializer->serialize(['profile' => 46], 'json')
+            $this->serializer->serialize(['profile' => 506], 'json')
         );
     }
 
