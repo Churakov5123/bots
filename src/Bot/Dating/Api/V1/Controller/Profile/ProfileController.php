@@ -4,32 +4,45 @@ declare(strict_types=1);
 
 namespace App\Bot\Dating\Api\V1\Controller\Profile;
 
+use App\Bot\Dating\Modules\Profile\Dto\CreateProfileDto;
+use App\Bot\Dating\Modules\Profile\Enum\Gender;
+use App\Bot\Dating\Modules\Profile\Form\Type\CreateProfileType;
+use App\Bot\Dating\Modules\Profile\Requests\CreateProfileRequest;
+use App\Bot\Dating\Modules\Profile\Services\CreateProfileService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * @Route("/profile")
  */
 class ProfileController extends AbstractController
 {
-    private SerializerInterface $serializer;
-
     public function __construct(
-        SerializerInterface $serializer,
+        private ValidatorInterface $validator,
+        private SerializerInterface $serializer,
+        private CreateProfileService $createProfileService
     ) {
-        $this->serializer = $serializer;
     }
 
     /**
      * @Route("/create", methods={"POST"})
      */
-    public function create(Request $request): JsonResponse
+    public function create(CreateProfileRequest $request): JsonResponse
     {
+        dd(Gender::cases());
+        dump($request);
+        $dto = (new CreateProfileDto())->fillFromBaseRequest($request);
+        dd($dto);
+//        $form = $this->createForm(CreateProfileType::class, $dto);
+//
+//        $newProfile = $this->createProfileService->make($dto);
+
         return JsonResponse::fromJsonString(
-            $this->serializer->serialize(['profile' => 506], 'json')
+            $this->serializer->serialize(21, 'json')
         );
     }
 

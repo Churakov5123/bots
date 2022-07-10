@@ -5,10 +5,16 @@ declare(strict_types=1);
 namespace App\Bot\Dating\Modules\Profile\Repository;
 
 use App\Bot\Dating\Data\Entity\Profile;
-use Doctrine\ORM\EntityRepository;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 
-class ProfileRepository extends EntityRepository
+class ProfileRepository extends ServiceEntityRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, Profile::class);
+    }
+
     public function save(Profile $group): void
     {
         $em = $this->getEntityManager();

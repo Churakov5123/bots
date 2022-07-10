@@ -4,13 +4,20 @@ declare(strict_types=1);
 
 namespace App\Bot\Dating\Data\Entity;
 
-use App\Bot\Dating\Modules\Profile\Dto\TagsDto;
+use App\Bot\Dating\Modules\Profile\Enum\Couple;
+use App\Bot\Dating\Modules\Profile\Enum\Gender;
+use App\Bot\Dating\Modules\Profile\Enum\Platform;
+use App\Bot\Dating\Modules\Profile\Enum\Zodiac;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
-
+use Ramsey\Uuid\Doctrine\UuidGenerator;
 /**
- * @ORM\Table
+ * @ORM\Table(indexes={
+ *      @ORM\Index(columns={"login"}),
+ *      @ORM\Index(columns={"is_active"}),
+ *      @ORM\Index(columns={"created_at"}),
+ * })
  *
  * @ORM\Entity(repositoryClass="App\Bot\Dating\Modules\Profile\Repository\ProfileRepository")
  *
@@ -19,112 +26,124 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Profile
 {
     /**
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue
+     * @var \Ramsey\Uuid\UuidInterface
      *
-     * @Serializer\Expose
+     * @ORM\Id
+     * @ORM\Column(type="uuid", unique=true)
+     * @ORM\GeneratedValue(strategy="CUSTOM")
+     * @ORM\CustomIdGenerator(class=UuidGenerator::class)
      */
-    protected ?int $id = null;
+    protected ?string $id = null;
 
     /**
      * @ORM\Column(type="string", length=64)
      *
-     * @Assert\NotBlank
      * @Serializer\Expose
      */
     protected string $login;
 
     /**
-     * @var string
+     * @ORM\Column(type="string", length=150)
      *
-     * @ORM\Column(type="string", length=255)
      * @Serializer\Expose
      */
     protected string $name;
 
     /**
-     * ENUM
+     * @ORM\Column(type="datetime")
      *
-     * @var string
-     *
-     * @ORM\Column(type="string", length=10)
      * @Serializer\Expose
      */
-    protected string $gender;
+    public \DateTime $birthDate;
 
     /**
-     * ФОРМАТ ДАТЫ!
+     * @ORM\Column(type="string",  length=2)
      *
-     * @var string
-     *
+     * @Serializer\Expose
+     */
+    protected string $countryCode;
+
+    /**
      * @ORM\Column(type="string", length=255)
-     * @Serializer\Expose
-     */
-    protected string $birthdate;
-
-    /**
-     * ENUM
      *
-     * @var string
-     *
-     * @ORM\Column(type="string", length=10)
-     * @Serializer\Expose
-     */
-    protected string $couple;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(type="string", length=255)
-     * @Serializer\Expose
-     */
-    protected string $zodiac;
-
-    /**
-     * @var TagsDto[]
-     *
-     * @ORM\Column(type="array")
-     * @Serializer\Expose
-     */
-    protected array $tags;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Serializer\Expose
-     */
-    protected ?string $description = null;
-
-    /**
-     * Массив урл одресов на картинки, в хранилище по типу солителя.
-     *
-     * @var string[]
-     *
-     * @ORM\Column(type="array")
-     * @Serializer\Expose
-     */
-    protected array $media;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(type="string", length=255)
-     * @Serializer\Expose
-     */
-    protected string $country;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(type="string", length=255)
      * @Serializer\Expose
      */
     protected string $city;
 
     /**
+     * @ORM\Column(type="smallint")
+     *
+     * @Assert\Choice(callback={"App\Bot\Dating\Modules\Profile\Enum\Gender", "Gender::cases()"})
+     *
+     * @Serializer\Expose
+     */
+    protected int $gender;
+
+    /**
+     * @ORM\Column(type="smallint")
+
+     * @Assert\Choice(callback={"App\Bot\Dating\Modules\Profile\Enum\Platform", "Platform::cases()"})
+     *
+     * @Serializer\Expose
+     */
+    protected int $platform;
+
+    /**
+     * @ORM\Column(type="smallint")
+
+     * @Assert\Choice(callback={"App\Bot\Dating\Modules\Profile\Enum\Couple", "Couple::cases()"})
+     *
+     * @Serializer\Expose
+     */
+    protected int $couple;
+
+    /**
+     * @ORM\Column(type="smallint")
+     *
+     * @Assert\Choice(callback={"App\Bot\Dating\Modules\Profile\Enum\Zodiac", "Zodiac::cases()"})
+     *
+     * @Serializer\Expose
+     */
+    protected int $zodiac;
+
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     *
+     * @Serializer\Expose
+     */
+    protected ?string $tags = null;
+
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     *
+     * @Serializer\Expose
+     */
+    protected ?string $description = null;
+
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     *
+     * @Serializer\Expose
+     */
+    protected ?string $media = null;
+
+    /**
+     * @ORM\Column(type="string", length=5)
+     *
+     * @Serializer\Expose
+     */
+    protected string $locale;
+
+    /**
+     * @ORM\Column(type="string", length=2)
+     *
+     * @Serializer\Expose
+     */
+    protected string $lang;
+
+    /**
      * @ORM\Column(name="is_active", type="boolean")
+     *
      * @Serializer\Expose
      */
     protected bool $active = false;
@@ -136,199 +155,159 @@ class Profile
      */
     protected \DateTimeImmutable $createdAt;
 
+    public function __construct(
+        string $login,
+        string $name,
+        string $birthDate,
+        string $country,
+        string $city,
+        Gender $gender,
+        Platform $platform,
+        Couple $couple,
+        Zodiac $zodiac,
+        ?string $tags = null,
+        ?string $description = null,
+        ?string $media = null,
+    ) {
+        $this->login = $login;
+        $this->name = $name;
+        $this->birthDate = new \DateTime($birthDate);
+        $this->country = $country;
+        $this->city = $city;
+        $this->gender = $gender->value;
+        $this->platform = $platform->value;
+        $this->couple = $couple->value;
+        $this->zodiac = $zodiac->value;
+        $this->tags = $tags;
+        $this->description = $description;
+        $this->locale = 'ru';
+        $this->lang = 'ru';
+        $this->media = $media;
 
-    public function __construct()
-    {
+        $this->active = true;
         $this->createdAt = new \DateTimeImmutable();
     }
 
-    /**
-     * @return string
-     */
     public function getLogin(): string
     {
         return $this->login;
     }
 
-    /**
-     * @param string $login
-     */
     public function setLogin(string $login): void
     {
         $this->login = $login;
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param string $name
-     */
     public function setName(string $name): void
     {
         $this->name = $name;
     }
 
-    /**
-     * @return string
-     */
-    public function getGender(): string
+    public function getBirthDate(): string
     {
-        return $this->gender;
+        return $this->birthDate->format('Y-m-d');
     }
 
-    /**
-     * @param string $gender
-     */
-    public function setGender(string $gender): void
+    public function setBirthDate(\DateTime $birthDate): void
     {
-        $this->gender = $gender;
+        $this->birthDate = $birthDate;
     }
 
-    /**
-     * @return string
-     */
-    public function getBirthdate(): string
+    public function getCountryCode(): string
     {
-        return $this->birthdate;
+        return $this->countryCode;
     }
 
-    /**
-     * @param string $birthdate
-     */
-    public function setBirthdate(string $birthdate): void
+    public function setCountryCode(string $countryCode): void
     {
-        $this->birthdate = $birthdate;
+        $this->countryCode = $countryCode;
     }
 
-    /**
-     * @return string
-     */
-    public function getCouple(): string
-    {
-        return $this->couple;
-    }
-
-    /**
-     * @param string $couple
-     */
-    public function setCouple(string $couple): void
-    {
-        $this->couple = $couple;
-    }
-
-    /**
-     * @return string
-     */
-    public function getZodiac(): string
-    {
-        return $this->zodiac;
-    }
-
-    /**
-     * @param string $zodiac
-     */
-    public function setZodiac(string $zodiac): void
-    {
-        $this->zodiac = $zodiac;
-    }
-
-    /**
-     * @return TagsDto[]
-     */
-    public function getTags(): array
-    {
-        return $this->tags;
-    }
-
-    /**
-     * @param TagsDto[] $tags
-     */
-    public function setTags(array $tags): void
-    {
-        $this->tags = $tags;
-    }
-
-    /**
-     * @return string
-     */
-    public function getDescription(): ?string
-    {
-        return $this->description;
-    }
-
-    /**
-     * @param string $description
-     */
-    public function setDescription(?string $description): void
-    {
-        $this->description = $description;
-    }
-
-    /**
-     * @return string[]
-     */
-    public function getMedia(): array
-    {
-        return $this->media;
-    }
-
-    /**
-     * @param string[] $media
-     */
-    public function setMedia(array $media): void
-    {
-        $this->media = $media;
-    }
-
-    /**
-     * @return string
-     */
-    public function getCountry(): string
-    {
-        return $this->country;
-    }
-
-    /**
-     * @param string $country
-     */
-    public function setCountry(string $country): void
-    {
-        $this->country = $country;
-    }
-
-    /**
-     * @return string
-     */
     public function getCity(): string
     {
         return $this->city;
     }
 
-    /**
-     * @param string $city
-     */
     public function setCity(string $city): void
     {
         $this->city = $city;
     }
 
-    /**
-     * @return bool
-     */
-    public function isActive(): bool
+    public function getPlatform(): Platform
     {
-        return $this->active;
+        return Platform::from($this->platform);
     }
 
-    /**
-     * @param bool $active
-     */
+    public function setPlatform(Platform $platform): void
+    {
+        $this->platform = $platform->value;
+    }
+
+    public function getGender(): Gender
+    {
+        return Gender::from($this->gender);
+    }
+
+    public function setGender(Gender $gender): void
+    {
+        $this->gender = $gender->value;
+    }
+
+    public function getCouple(): Couple
+    {
+        return Couple::from($this->couple);
+    }
+
+    public function setCouple(Couple $couple): void
+    {
+        $this->couple = $couple->value;
+    }
+
+    public function getZodiac(): Zodiac
+    {
+        return Zodiac::from($this->zodiac);
+    }
+
+    public function setZodiac(Zodiac $zodiac): void
+    {
+        $this->zodiac = $zodiac->value;
+    }
+
+    public function getTags(): ?string
+    {
+        return $this->tags;
+    }
+
+    public function setTags(?string $tags): void
+    {
+        $this->tags = $tags;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): void
+    {
+        $this->description = $description;
+    }
+
+    public function getMedia(): ?string
+    {
+        return $this->media;
+    }
+
+    public function setMedia(?string $media): void
+    {
+        $this->media = $media;
+    }
+
     public function setActive(bool $active): void
     {
         $this->active = $active;
@@ -337,5 +316,10 @@ class Profile
     public function getCreatedAt(): \DateTimeImmutable
     {
         return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeImmutable $createdAt): void
+    {
+        $this->createdAt = $createdAt;
     }
 }
