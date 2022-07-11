@@ -10,8 +10,9 @@ use App\Bot\Dating\Modules\Profile\Enum\Platform;
 use App\Bot\Dating\Modules\Profile\Enum\Zodiac;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
-use Symfony\Component\Validator\Constraints as Assert;
 use Ramsey\Uuid\Doctrine\UuidGenerator;
+use Symfony\Component\Validator\Constraints as Assert;
+
 /**
  * @ORM\Table(indexes={
  *      @ORM\Index(columns={"login"}),
@@ -159,7 +160,7 @@ class Profile
         string $login,
         string $name,
         string $birthDate,
-        string $country,
+        string $countryCode,
         string $city,
         Gender $gender,
         Platform $platform,
@@ -172,7 +173,7 @@ class Profile
         $this->login = $login;
         $this->name = $name;
         $this->birthDate = new \DateTime($birthDate);
-        $this->country = $country;
+        $this->countryCode = $countryCode;
         $this->city = $city;
         $this->gender = $gender->value;
         $this->platform = $platform->value;

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Bot\Dating\Components\Request;
@@ -25,7 +26,7 @@ abstract class BaseRequest
 
         $messages = ['message' => 'validation_failed', 'errors' => []];
 
-        /** @var ConstraintViolation  */
+        /* @var ConstraintViolation */
         foreach ($errors as $message) {
             $messages['errors'][] = [
                 'property' => $message->getPropertyPath(),

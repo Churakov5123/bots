@@ -1,12 +1,10 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Bot\Dating\Modules\Profile\Requests;
 
-use App\Bot\Dating\Components\Enum\EnumTransformer;
 use App\Bot\Dating\Components\Request\BaseRequest;
-use App\Bot\Dating\Modules\Profile\Enum\Gender;
-use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints\Choice;
 use Symfony\Component\Validator\Constraints\Country;
 use Symfony\Component\Validator\Constraints\DateTime;
@@ -15,8 +13,6 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\NotNull;
 use Symfony\Component\Validator\Constraints\Regex;
 use Symfony\Component\Validator\Constraints\Type;
-use Symfony\Contracts\Service\Attribute\Required;
-use UnitEnum;
 
 class CreateProfileRequest extends BaseRequest
 {
@@ -57,7 +53,7 @@ class CreateProfileRequest extends BaseRequest
     #[NotNull]
     #[Length([
         'min' => 2,
-        'max' => 2
+        'max' => 2,
     ])]
     protected string $countryCode;
 
@@ -66,7 +62,7 @@ class CreateProfileRequest extends BaseRequest
     #[NotNull]
     protected string $city;
 
-    #[Choice(choices: [])]
+    #[Choice(choices: [1, 2, 3])]
     #[NotBlank]
     #[NotNull]
     protected int $gender;

@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace App\Bot\Dating\Api\V1\Controller\Profile;
 
 use App\Bot\Dating\Modules\Profile\Dto\CreateProfileDto;
-use App\Bot\Dating\Modules\Profile\Enum\Gender;
-use App\Bot\Dating\Modules\Profile\Form\Type\CreateProfileType;
 use App\Bot\Dating\Modules\Profile\Requests\CreateProfileRequest;
 use App\Bot\Dating\Modules\Profile\Services\CreateProfileService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -33,16 +31,12 @@ class ProfileController extends AbstractController
      */
     public function create(CreateProfileRequest $request): JsonResponse
     {
-        dd(Gender::cases());
-        dump($request);
         $dto = (new CreateProfileDto())->fillFromBaseRequest($request);
-        dd($dto);
-//        $form = $this->createForm(CreateProfileType::class, $dto);
-//
-//        $newProfile = $this->createProfileService->make($dto);
+
+        $newProfile = $this->createProfileService->make($dto);
 
         return JsonResponse::fromJsonString(
-            $this->serializer->serialize(21, 'json')
+            $this->serializer->serialize($newProfile, 'json')
         );
     }
 

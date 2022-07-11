@@ -18,15 +18,11 @@ class CreateProfileDto extends BaseDto
     public ?int $couple = null;
     public ?int $zodiac = null;
     public ?int $platform = null;
-//
-//    private ?array $tags = null;
-//    private ?array $media = null;
-//    private ?string $lang = null;
-//    private ?string $locale = null;
-//
-//    private ?bool $active = null;
-//
-
+    public ?array $tags = null;
+    public ?array $media = null;
+    private ?string $lang = null;
+    private ?string $locale = null;
+    private ?bool $active = null;
 
     protected function className(): string
     {

@@ -17,17 +17,18 @@ class CreateProfileService
     public function make(CreateProfileDto $dto): Profile
     {
         $newProfile = new Profile(
-            $dto->getLogin(),
-            $dto->getName(),
-            $dto->getBirthDate(),
-            $dto->getCountry(),
-            $dto->getCity(),
-            $dto->getGender(),
-            $dto->getCouple(),
-            $dto->getZodiac(),
-            $dto->getTags(),
-            $dto->getDescription(),
-            $dto->getMedia()
+            $dto->login,
+            $dto->name,
+            $dto->birthDate,
+            $dto->countryCode,
+            $dto->city,
+            $dto->gender,
+            $dto->platform,
+            $dto->couple,
+            $dto->zodiac,
+            $dto->tags,
+            $dto->description,
+            $dto->media,
         );
 
         $this->profileRepository->save($newProfile);
