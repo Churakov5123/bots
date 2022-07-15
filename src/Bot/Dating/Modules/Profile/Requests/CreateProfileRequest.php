@@ -67,20 +67,16 @@ class CreateProfileRequest extends BaseRequest
     #[NotNull]
     protected int $gender;
 
-//    #[Type('integer')]
-//    #[NotBlank]
-//    #[NotNull]
-//    protected int $couple;
-//
-//    #[Type('integer')]
-//    #[NotBlank]
-//    #[NotNull]
-//    protected int $platform;
-//
-//    protected ?array $tags = null;
-//    protected ?array $media = null;
-//    protected ?string $lang = null;
-//    protected ?string $locale = null;
-//
-//    protected ?bool $active = null;
+    #[Choice(choices: [1, 2, 3,4,5,6])]
+    #[NotBlank]
+    #[NotNull]
+    protected int $couple;
+
+    #[Choice(choices: [1])]
+    #[NotBlank]
+    #[NotNull]
+    protected int $platform;
+
+    protected ?array $tags = null;
+    protected ?array $media = null;
 }

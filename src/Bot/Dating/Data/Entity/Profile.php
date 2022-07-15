@@ -108,11 +108,22 @@ class Profile
     protected int $zodiac;
 
     /**
-     * @ORM\Column(type="text", nullable=true)
+     * @var int[]
+     *
+     * @ORM\Column(type="json")
      *
      * @Serializer\Expose
      */
-    protected ?string $tags = null;
+    protected array $matchingZodiacs = [];
+
+    /**
+     * @var string[]
+     *
+     * @ORM\Column(type="json")
+     *
+     * @Serializer\Expose
+     */
+    protected array $tags = [];
 
     /**
      * @ORM\Column(type="text", nullable=true)
@@ -122,11 +133,13 @@ class Profile
     protected ?string $description = null;
 
     /**
-     * @ORM\Column(type="text", nullable=true)
+     * @var string[]
+     *
+     * @ORM\Column(type="json")
      *
      * @Serializer\Expose
      */
-    protected ?string $media = null;
+    protected array $media = [];
 
     /**
      * @ORM\Column(type="string", length=5)
@@ -165,10 +178,9 @@ class Profile
         Gender $gender,
         Platform $platform,
         Couple $couple,
-        Zodiac $zodiac,
-        ?string $tags = null,
+        ?array $tags = null,
         ?string $description = null,
-        ?string $media = null,
+        ?array $media = null,
     ) {
         $this->login = $login;
         $this->name = $name;
@@ -178,13 +190,14 @@ class Profile
         $this->gender = $gender->value;
         $this->platform = $platform->value;
         $this->couple = $couple->value;
-        $this->zodiac = $zodiac->value;
-        $this->tags = $tags;
+        $this->zodiac = $this->calculateZodiac($birthDate)->value;
+        $this->matchingZodiacs = $this->getMatchingZodiacs($this->getZodiac($birthDate));
+        $this->tags = $tags?? [];
         $this->description = $description;
+        $this->media = $media ?? [];
+
         $this->locale = 'ru';
         $this->lang = 'ru';
-        $this->media = $media;
-
         $this->active = true;
         $this->createdAt = new \DateTimeImmutable();
     }
@@ -279,14 +292,36 @@ class Profile
         $this->zodiac = $zodiac->value;
     }
 
-    public function getTags(): ?string
+    /**
+     * @return string[]
+     */
+    public function getTags(): array
     {
         return $this->tags;
     }
 
-    public function setTags(?string $tags): void
+    /**
+     * @param string[] $tags
+     */
+    public function setTags(array $tags): void
     {
         $this->tags = $tags;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getMedia(): array
+    {
+        return $this->media;
+    }
+
+    /**
+     * @param string[] $media
+     */
+    public function setMedia(array $media): void
+    {
+        $this->media = $media;
     }
 
     public function getDescription(): ?string
@@ -299,14 +334,26 @@ class Profile
         $this->description = $description;
     }
 
-    public function getMedia(): ?string
+    /**
+     * @param string $birthDate
+     *
+     * @return Zodiac
+     */
+    public function calculateZodiac(string $birthDate): Zodiac
     {
-        return $this->media;
+       return  Zodiac::from(1);
     }
 
-    public function setMedia(?string $media): void
+    /**
+     * Логика для получения совпадений с другими зодиаками.
+     *
+     * @param Zodiac $zodiac
+     *
+     * @return int[]
+     */
+    public function getMatchingZodiacs(Zodiac $zodiac):array
     {
-        $this->media = $media;
+        return [];
     }
 
     public function setActive(bool $active): void

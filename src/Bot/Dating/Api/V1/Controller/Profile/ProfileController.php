@@ -32,7 +32,6 @@ class ProfileController extends AbstractController
     public function create(CreateProfileRequest $request): JsonResponse
     {
         $dto = (new CreateProfileDto())->fillFromBaseRequest($request);
-
         $newProfile = $this->createProfileService->make($dto);
 
         return JsonResponse::fromJsonString(
