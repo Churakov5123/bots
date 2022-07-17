@@ -100,7 +100,7 @@ class Profile
     /**
      * @ORM\Column(type="smallint")
      *
-     * @Assert\Choice(callback={"App\Bot\Dating\Modules\Profile\Enum\Zodiac", "Zodiac::cases()"})
+     * @Assert\Choice(callback={"App\Bot\Dating\Modules\Profile\Enum\ZodiacDto", "ZodiacDto::cases()"})
      *
      * @Serializer\Expose
      */
