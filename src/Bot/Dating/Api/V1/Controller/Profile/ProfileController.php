@@ -12,7 +12,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * @Route("/profile")
@@ -20,7 +19,6 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class ProfileController extends AbstractController
 {
     public function __construct(
-        private ValidatorInterface $validator,
         private SerializerInterface $serializer,
         private CreateProfileService $createProfileService
     ) {

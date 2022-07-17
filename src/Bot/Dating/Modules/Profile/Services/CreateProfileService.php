@@ -25,9 +25,10 @@ class CreateProfileService
             $dto->getGender(),
             $dto->getPlatform(),
             $dto->getCouple(),
-            $dto->getTags(),
+            $dto->getTag(),
             $dto->getDescription(),
             $dto->getMedia(),
+            $dto->getHobby(),
         );
 
         $this->profileRepository->save($newProfile);

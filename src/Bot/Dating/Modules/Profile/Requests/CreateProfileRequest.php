@@ -5,78 +5,109 @@ declare(strict_types=1);
 namespace App\Bot\Dating\Modules\Profile\Requests;
 
 use App\Bot\Dating\Components\Request\BaseRequest;
-use Symfony\Component\Validator\Constraints\Choice;
-use Symfony\Component\Validator\Constraints\Country;
-use Symfony\Component\Validator\Constraints\DateTime;
-use Symfony\Component\Validator\Constraints\Length;
-use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Constraints\NotNull;
-use Symfony\Component\Validator\Constraints\Regex;
-use Symfony\Component\Validator\Constraints\Type;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class CreateProfileRequest extends BaseRequest
 {
-    #[Type('string')]
-    #[Regex('/^[A-Za-z\d_\- ]+$/')] // допилить регулярку чтобы и цифры и букувы - только цирфы не работало! и собаку тоже!!!
-    #[NotBlank]
-    #[NotNull]
-    #[Length([
-        'min' => 2,
-        'max' => 25,
-    ])]
+    /**
+     * @Assert\NotBlank,
+     * @Assert\NotNull,
+     * @Assert\Regex(
+     *     pattern = "/^@[a-z0-9_]{3,20}$|^[a-z0-9_]{3,20}$/i",
+     * ),
+     * @Assert\Type("string"),
+     * @Assert\Length(
+     *      min = 2,
+     *      max = 25,
+     * )
+     */
     protected ?string $login;
 
-    #[Type('string')]
-    #[Regex('/^[A-Za-z\d_\- ]+$/')] // допилить регулярку чтобы и цифер небыло
-    #[NotBlank]
-    #[NotNull]
-    #[Length([
-        'min' => 2,
-        'max' => 30,
-    ])]
+    /**
+     * @Assert\NotBlank,
+     * @Assert\NotNull,
+     * @Assert\Regex(
+     *     pattern = "/^([A-Za-z])+$/",
+     * ),
+     * @Assert\Type("string"),
+     * @Assert\Length(
+     *      min = 2,
+     *      max = 30,
+     * )
+     */
     protected string $name;
 
-    #[Type('string')]
-    #[Length([
-        'min' => 2,
-        'max' => 500,
-    ])]
+    /**
+     * @Assert\Type("string"),
+     * @Assert\Length(
+     *      min = 2,
+     *      max = 350,
+     * )
+     */
     protected ?string $description;
 
-    #[DateTime('d-m-Y')]
-    #[NotBlank]
-    #[NotNull]
+    /**
+     * @Assert\NotBlank,
+     * @Assert\NotNull,
+     * @Assert\DateTime("d-m-Y")
+     */
     protected string $birthDate;
 
-    #[Country()]
-    #[NotBlank]
-    #[NotNull]
-    #[Length([
-        'min' => 2,
-        'max' => 2,
-    ])]
+    /**
+     * @Assert\NotBlank,
+     * @Assert\NotNull,
+     * @Assert\Country
+     */
     protected string $countryCode;
 
-    #[Type('string')]
-    #[NotBlank]
-    #[NotNull]
+    /**
+     * @Assert\NotBlank,
+     * @Assert\NotNull,
+     * @Assert\Type("string")
+     */
     protected string $city;
 
-    #[Choice(choices: [1, 2, 3])]
-    #[NotBlank]
-    #[NotNull]
+    /**
+     * @Assert\NotBlank,
+     * @Assert\NotNull,
+     * @Assert\Choice({1,2,3})
+     */
     protected int $gender;
 
-    #[Choice(choices: [1, 2, 3,4,5,6])]
-    #[NotBlank]
-    #[NotNull]
+    /**
+     * @Assert\NotBlank,
+     * @Assert\NotNull,
+     * @Assert\Choice({1,2,3,4,5,6})
+     */
     protected int $couple;
 
-    #[Choice(choices: [1])]
-    #[NotBlank]
-    #[NotNull]
+    /**
+     * @Assert\NotBlank,
+     * @Assert\NotNull,
+     * @Assert\Choice({1})
+     */
     protected int $platform;
 
-    protected ?array $tags = null;
+    /**
+     * @Assert\Choice({1,2,3,4,5,6,7,8})
+     */
+    protected ?int $tag = null;
+
+    /**
+     * @Assert\Collection(
+     *     fields={
+     *         "popular"  =  @Assert\Optional({@Assert\Type("string")}),
+     *     },
+     *     allowMissingFields = true
+     * )  */
     protected ?array $media = null;
+
+    /**
+     * @Assert\Collection(
+     *     fields={
+     *         "popular"  =  @Assert\Optional({@Assert\Type("string")}),
+     *     },
+     *     allowMissingFields = true
+     * )  */
+    protected ?array $hobby = null;
 }

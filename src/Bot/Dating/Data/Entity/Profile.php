@@ -7,6 +7,7 @@ namespace App\Bot\Dating\Data\Entity;
 use App\Bot\Dating\Modules\Profile\Enum\Couple;
 use App\Bot\Dating\Modules\Profile\Enum\Gender;
 use App\Bot\Dating\Modules\Profile\Enum\Platform;
+use App\Bot\Dating\Modules\Profile\Enum\Tag;
 use App\Bot\Dating\Modules\Profile\Enum\Zodiac;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
@@ -82,7 +83,6 @@ class Profile
 
     /**
      * @ORM\Column(type="smallint")
-
      * @Assert\Choice(callback={"App\Bot\Dating\Modules\Profile\Enum\Platform", "Platform::cases()"})
      *
      * @Serializer\Expose
@@ -91,7 +91,6 @@ class Profile
 
     /**
      * @ORM\Column(type="smallint")
-
      * @Assert\Choice(callback={"App\Bot\Dating\Modules\Profile\Enum\Couple", "Couple::cases()"})
      *
      * @Serializer\Expose
@@ -117,13 +116,15 @@ class Profile
     protected array $matchingZodiacs = [];
 
     /**
-     * @var string[]
+     * @var int
      *
-     * @ORM\Column(type="json")
+     * @ORM\Column(type="integer", nullable=true)
+     *
+     * @Assert\Choice(callback={"App\Bot\Dating\Modules\Profile\Enum\Tag", "Tag::cases()"})
      *
      * @Serializer\Expose
      */
-    protected array $tags = [];
+    protected ?int $tag = null;
 
     /**
      * @ORM\Column(type="text", nullable=true)
@@ -140,6 +141,15 @@ class Profile
      * @Serializer\Expose
      */
     protected array $media = [];
+
+    /**
+     * @var string[]
+     *
+     * @ORM\Column(type="json")
+     *
+     * @Serializer\Expose
+     */
+    protected array $hobby = [];
 
     /**
      * @ORM\Column(type="string", length=5)
@@ -178,9 +188,10 @@ class Profile
         Gender $gender,
         Platform $platform,
         Couple $couple,
-        ?array $tags = null,
+        ?Tag $tag = null,
         ?string $description = null,
         ?array $media = null,
+        ?array $hobby = null,
     ) {
         $this->login = $login;
         $this->name = $name;
@@ -190,16 +201,29 @@ class Profile
         $this->gender = $gender->value;
         $this->platform = $platform->value;
         $this->couple = $couple->value;
-        $this->zodiac = $this->calculateZodiac($birthDate)->value;
-        $this->matchingZodiacs = $this->getMatchingZodiacs($this->getZodiac($birthDate));
-        $this->tags = $tags?? [];
+        $this->tag = $tag?->value;
         $this->description = $description;
         $this->media = $media ?? [];
+        $this->hobby = $hobby ?? [];
 
+        $this->zodiac = $this->calculateZodiac($birthDate)->value;
         $this->locale = 'ru';
         $this->lang = 'ru';
         $this->active = true;
         $this->createdAt = new \DateTimeImmutable();
+    }
+
+    /**
+     * @return \Ramsey\Uuid\UuidInterface
+     */
+    public function getId(): \Ramsey\Uuid\UuidInterface|string|null
+    {
+        return $this->id;
+    }
+
+    public function isActive(): bool
+    {
+        return $this->active;
     }
 
     public function getLogin(): string
@@ -224,7 +248,7 @@ class Profile
 
     public function getBirthDate(): string
     {
-        return $this->birthDate->format('Y-m-d');
+        return $this->birthDate->format('d-m-Y');
     }
 
     public function setBirthDate(\DateTime $birthDate): void
@@ -292,20 +316,30 @@ class Profile
         $this->zodiac = $zodiac->value;
     }
 
-    /**
-     * @return string[]
-     */
-    public function getTags(): array
+    public function getTag(): ?Tag
     {
-        return $this->tags;
+        return Tag::from($this->tag);
+    }
+
+    public function setTag(?Tag $tag): void
+    {
+        $this->tag = $tag;
     }
 
     /**
-     * @param string[] $tags
+     * @return string[]
      */
-    public function setTags(array $tags): void
+    public function getHobby(): array
     {
-        $this->tags = $tags;
+        return $this->hobby;
+    }
+
+    /**
+     * @param string[] $hobby
+     */
+    public function setHobby(array $hobby): void
+    {
+        $this->hobby = $hobby;
     }
 
     /**
@@ -334,31 +368,56 @@ class Profile
         $this->description = $description;
     }
 
-    /**
-     * @param string $birthDate
-     *
-     * @return Zodiac
-     */
     public function calculateZodiac(string $birthDate): Zodiac
     {
-       return  Zodiac::from(1);
+        return Zodiac::from(1);
+    }
+
+    public function setMatchingZodiacs(): void
+    {
+        $result = $this->calculateMatchingZodiac(
+            $this->getZodiac()
+        );
+
+        $this->matchingZodiacs = $result;
     }
 
     /**
-     * Логика для получения совпадений с другими зодиаками.
-     *
-     * @param Zodiac $zodiac
-     *
      * @return int[]
      */
-    public function getMatchingZodiacs(Zodiac $zodiac):array
+    public function getMatchingZodiacs(): array
     {
-        return [];
+        return $this->matchingZodiacs;
     }
 
     public function setActive(bool $active): void
     {
         $this->active = $active;
+    }
+
+    public function getLocale(): string
+    {
+        return $this->locale;
+    }
+
+    public function setLocale(string $locale): void
+    {
+        $this->locale = $locale;
+    }
+
+    public function getLang(): string
+    {
+        return $this->lang;
+    }
+
+    public function setLang(string $lang): void
+    {
+        $this->lang = $lang;
+    }
+
+    public function calculateMatchingZodiac(Zodiac $zodiac): array
+    {
+        return [];
     }
 
     public function getCreatedAt(): \DateTimeImmutable
