@@ -12,11 +12,14 @@ class ZodiacService implements Zodiac
 {
     protected \DateTime $date;
     protected CalculateZodiac $calculateZodiac;
+    protected MatchAstrologyZodiac $matchAstrologyZodiac;
 
     public function __construct(\DateTime $date,
-    ) {
+    )
+    {
         $this->date = $date;
         $this->calculateZodiac = new CalculateZodiac($date);
+        $this->matchAstrologyZodiac = new MatchAstrologyZodiac();
     }
 
     /**
@@ -29,9 +32,9 @@ class ZodiacService implements Zodiac
         return AstrologyZodiac::from($result->getKey());
     }
 
-    public function getAstrologyZodiacMatches(AstrologyZodiac $zodiac): array
+    public function getAstrologyZodiacMatches(AstrologyZodiac $targetZodiac, AstrologyZodiac $zodiac): string
     {
-        return [];
+        return $this->matchAstrologyZodiac->getMatched($targetZodiac, $zodiac);
     }
 
     public function getChineseZodiac(\DateTime $data): ChineseZodiac

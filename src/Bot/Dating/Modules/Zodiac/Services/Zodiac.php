@@ -12,7 +12,7 @@ interface Zodiac
 {
     public function getAstrologyZodiac(\DateTime $data): AstrologyZodiac;
 
-    public function getAstrologyZodiacMatches(AstrologyZodiac $zodiac): array;
+    public function getAstrologyZodiacMatches(AstrologyZodiac $targetZodiac, AstrologyZodiac $zodiac): string;
 
     public function getChineseZodiac(\DateTime $data): ChineseZodiac;
 

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Bot\Dating\Modules\Zodiac\Services;
 
+use App\Bot\Dating\Modules\Zodiac\Enum\AstrologyZodiac;
+
 class MatchAstrologyZodiac
 {
     private const DECODING = [
@@ -103,4 +105,16 @@ class MatchAstrologyZodiac
             12 => [12, 23, 33, 42, 50, 57, 63, 68, 72, 75, 77, 78]
         ];
 
+
+    public function getMatched(AstrologyZodiac $targetZodiac, AstrologyZodiac $zodiac): string
+    {
+        $compatibilities = $this->getCompatibilities($targetZodiac);
+
+        return self::DECODING[$compatibilities[$zodiac->value - 1]];
+    }
+
+    private function getCompatibilities(AstrologyZodiac $zodiac): array
+    {
+        return self::COMPATIBILITY[$zodiac->value];
+    }
 }
