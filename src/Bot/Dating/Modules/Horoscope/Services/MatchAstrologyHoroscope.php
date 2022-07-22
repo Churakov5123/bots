@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Bot\Dating\Modules\Zodiac\Services;
+namespace App\Bot\Dating\Modules\Horoscope\Services;
 
-use App\Bot\Dating\Modules\Zodiac\Enum\AstrologyZodiac;
+use App\Bot\Dating\Modules\Horoscope\Enum\AstrologyHoroscope;
 
-class MatchAstrologyZodiac
+class MatchAstrologyHoroscope
 {
     private const DECODING = [
         1 => "отношения предполагают постоянные споры и борьбу личностей.",
@@ -105,16 +105,32 @@ class MatchAstrologyZodiac
             12 => [12, 23, 33, 42, 50, 57, 63, 68, 72, 75, 77, 78]
         ];
 
+    private const BEST_COMPATIBILITY = [1,2,3,4,5];
 
-    public function getMatched(AstrologyZodiac $targetZodiac, AstrologyZodiac $zodiac): string
+    public function getMatched(AstrologyHoroscope $targetZodiac, AstrologyHoroscope $zodiac): string
     {
         $compatibilities = $this->getCompatibilities($targetZodiac);
 
         return self::DECODING[$compatibilities[$zodiac->value - 1]];
     }
 
-    private function getCompatibilities(AstrologyZodiac $zodiac): array
+    private function getCompatibilities(AstrologyHoroscope $zodiac): array
     {
         return self::COMPATIBILITY[$zodiac->value];
+    }
+
+    public function getBestMatched(AstrologyHoroscope $targetZodiac, AstrologyHoroscope $zodiac): ?string
+    {
+        $compatibilities = $this->filteredOnBestCompatibilities($targetZodiac);
+
+        if(empty($compatibilities)){
+            return null;
+        }
+        return self::DECODING[$compatibilities[$zodiac->value - 1]];
+    }
+
+    private function filteredOnBestCompatibilities(AstrologyHoroscope $zodiac): array
+    {
+        return array_diff(self::COMPATIBILITY[$zodiac->value],self::BEST_COMPATIBILITY);
     }
 }

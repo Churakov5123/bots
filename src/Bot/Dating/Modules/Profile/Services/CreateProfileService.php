@@ -5,21 +5,28 @@ declare(strict_types=1);
 namespace App\Bot\Dating\Modules\Profile\Services;
 
 use App\Bot\Dating\Data\Entity\Profile;
+use App\Bot\Dating\Modules\Horoscope\Enum\AstrologyHoroscope;
+use App\Bot\Dating\Modules\Horoscope\Services\HoroscopeService;
 use App\Bot\Dating\Modules\Profile\Dto\CreateProfileDto;
 use App\Bot\Dating\Modules\Profile\Repository\ProfileRepository;
 
+
 class CreateProfileService
 {
-    public function __construct(private ProfileRepository $profileRepository
-    ) {
+    public function __construct(private ProfileRepository $profileRepository,
+    )
+    {
     }
 
     public function make(CreateProfileDto $dto): Profile
     {
+        $horoscope = new HoroscopeService($dto->getBirthDate());
+
         $newProfile = new Profile(
             $dto->getLogin(),
             $dto->getName(),
             $dto->getBirthDate(),
+            $horoscope->getAstrologyHoroscope(),
             $dto->getCountryCode(),
             $dto->getCity(),
             $dto->getGender(),

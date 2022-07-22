@@ -45,9 +45,9 @@ class CreateProfileDto extends BaseDto
         return $this->description;
     }
 
-    public function getBirthDate(): ?string
+    public function getBirthDate(): ?\DateTime
     {
-        return $this->birthDate;
+        return new \DateTime($this->birthDate);
     }
 
     public function getCountryCode(): ?string

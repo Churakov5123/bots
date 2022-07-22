@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Bot\Dating\Data\Entity;
 
+use App\Bot\Dating\Modules\Horoscope\Enum\AstrologyHoroscope;
 use App\Bot\Dating\Modules\Profile\Enum\Couple;
 use App\Bot\Dating\Modules\Profile\Enum\Gender;
 use App\Bot\Dating\Modules\Profile\Enum\Platform;
@@ -100,7 +101,7 @@ class Profile
     /**
      * @ORM\Column(type="smallint")
      *
-     * @Assert\Choice(callback={"App\Bot\Dating\Modules\Profile\Enum\ZodiacDto", "ZodiacDto::cases()"})
+     * @Assert\Choice(callback={"App\Bot\Dating\Modules\Profile\Enum\HoroscopeValueObject", "HoroscopeValueObject::cases()"})
      *
      * @Serializer\Expose
      */
@@ -183,6 +184,7 @@ class Profile
         string $login,
         string $name,
         string $birthDate,
+        AstrologyHoroscope $zodiac,
         string $countryCode,
         string $city,
         Gender $gender,
@@ -196,6 +198,7 @@ class Profile
         $this->login = $login;
         $this->name = $name;
         $this->birthDate = new \DateTime($birthDate);
+        $this->zodiac = $zodiac->value;
         $this->countryCode = $countryCode;
         $this->city = $city;
         $this->gender = $gender->value;
@@ -206,7 +209,6 @@ class Profile
         $this->media = $media ?? [];
         $this->hobby = $hobby ?? [];
 
-        $this->zodiac = $this->calculateZodiac($birthDate)->value;
         $this->locale = 'ru';
         $this->lang = 'ru';
         $this->active = true;
@@ -366,11 +368,6 @@ class Profile
     public function setDescription(?string $description): void
     {
         $this->description = $description;
-    }
-
-    public function calculateZodiac(string $birthDate): Zodiac
-    {
-        return Zodiac::from(1);
     }
 
     public function setMatchingZodiacs(): void

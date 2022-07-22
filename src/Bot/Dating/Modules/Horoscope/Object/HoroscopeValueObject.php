@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Bot\Dating\Modules\Zodiac\Dto;
+namespace App\Bot\Dating\Modules\Horoscope\Object;
 
-use App\Bot\Dating\Modules\Zodiac\Enum\Calendar;
+use App\Bot\Dating\Modules\Horoscope\Enum\Calendar;
 
-class ZodiacDto
+class HoroscopeValueObject
 {
     private ?string $name;
     private ?int $key;
