@@ -14,6 +14,7 @@ class HoroscopeValueObject
     private ?string $start;
     private ?string $end;
     private ?Calendar $calendar;
+    private ?string $description;
 
     public function __construct(
         ?string $name,
@@ -21,7 +22,8 @@ class HoroscopeValueObject
         ?string $unicode,
         ?string $start,
         ?string $end,
-        ?Calendar $calendar
+        ?Calendar $calendar,
+        ?string $description = null
     ) {
         $this->name = $name;
         $this->key = $key;
@@ -29,6 +31,7 @@ class HoroscopeValueObject
         $this->start = $start;
         $this->end = $end;
         $this->calendar = $calendar;
+        $this->description = $description;
     }
 
     public function getName(): ?string

@@ -12,7 +12,6 @@ enum AstrologyHoroscope: int
     case Cancer = 4;
     case Leo = 5;
     case Virgo = 6;
-
     case Libra = 7;
     case Scorpio = 8;
     case Sagittarius = 9;
