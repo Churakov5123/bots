@@ -100,7 +100,7 @@ class CreateProfileRequest extends BaseRequest
      *     },
      *     allowMissingFields = true
      * )  */
-    protected ?array $media = null;
+    protected ?array $images = null;
 
     /**
      * @Assert\Collection(

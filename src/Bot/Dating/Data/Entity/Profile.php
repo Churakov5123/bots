@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace App\Bot\Dating\Data\Entity;
 
 use App\Bot\Dating\Modules\Horoscope\Enum\AstrologyHoroscope;
+use App\Bot\Dating\Modules\Horoscope\Enum\ChineseHoroscope;
 use App\Bot\Dating\Modules\Profile\Enum\Couple;
 use App\Bot\Dating\Modules\Profile\Enum\Gender;
 use App\Bot\Dating\Modules\Profile\Enum\Platform;
 use App\Bot\Dating\Modules\Profile\Enum\Tag;
-use App\Bot\Dating\Modules\Profile\Enum\Zodiac;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
 use Ramsey\Uuid\Doctrine\UuidGenerator;
@@ -19,6 +20,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table(indexes={
  *      @ORM\Index(columns={"login"}),
  *      @ORM\Index(columns={"is_active"}),
+ *      @ORM\Index(columns={"is_private_mode"}),
  *      @ORM\Index(columns={"created_at"}),
  * })
  *
@@ -105,16 +107,16 @@ class Profile
      *
      * @Serializer\Expose
      */
-    protected int $zodiac;
+    protected int $astrologyHoroscope;
 
     /**
-     * @var int[]
+     * @ORM\Column(type="smallint")
      *
-     * @ORM\Column(type="json")
+     * @Assert\Choice(callback={"App\Bot\Dating\Modules\Profile\Enum\HoroscopeValueObject", "HoroscopeValueObject::cases()"})
      *
      * @Serializer\Expose
      */
-    protected array $matchingZodiacs = [];
+    protected int $chineseHoroscope;
 
     /**
      * @var int
@@ -135,13 +137,9 @@ class Profile
     protected ?string $description = null;
 
     /**
-     * @var string[]
-     *
-     * @ORM\Column(type="json")
-     *
-     * @Serializer\Expose
+     * @ORM\OneToMany(targetEntity="Image", mappedBy="profile")
      */
-    protected array $media = [];
+    protected ArrayCollection $images;
 
     /**
      * @var string[]
@@ -174,6 +172,20 @@ class Profile
     protected bool $active = false;
 
     /**
+     * @ORM\Column(name="is_private_mode", type="boolean")
+     *
+     * @Serializer\Expose
+     */
+    protected bool $privateMode = false;
+
+    /**
+     * @ORM\Column(type="datetime_immutable")
+     *
+     * @Serializer\Expose
+     */
+    protected ?\DateTimeImmutable $lastActivity = null;
+
+    /**
      * @ORM\Column(type="datetime_immutable")
      *
      * @Serializer\Expose
@@ -184,29 +196,32 @@ class Profile
         string $login,
         string $name,
         string $birthDate,
-        AstrologyHoroscope $zodiac,
+        AstrologyHoroscope $astrologyHoroscope,
+        ChineseHoroscope $chineseHoroscope,
         string $countryCode,
         string $city,
         Gender $gender,
         Platform $platform,
         Couple $couple,
+
         ?Tag $tag = null,
         ?string $description = null,
-        ?array $media = null,
         ?array $hobby = null,
     ) {
         $this->login = $login;
         $this->name = $name;
         $this->birthDate = new \DateTime($birthDate);
-        $this->zodiac = $zodiac->value;
+        $this->astrologyHoroscope = $astrologyHoroscope->value;
+        $this->chineseHoroscope = $chineseHoroscope->value;
         $this->countryCode = $countryCode;
         $this->city = $city;
         $this->gender = $gender->value;
         $this->platform = $platform->value;
         $this->couple = $couple->value;
+        $this->privateMode = false;
         $this->tag = $tag?->value;
         $this->description = $description;
-        $this->media = $media ?? [];
+        $this->images = new ArrayCollection();
         $this->hobby = $hobby ?? [];
 
         $this->locale = 'ru';
@@ -308,16 +323,6 @@ class Profile
         $this->couple = $couple->value;
     }
 
-    public function getZodiac(): Zodiac
-    {
-        return Zodiac::from($this->zodiac);
-    }
-
-    public function setZodiac(Zodiac $zodiac): void
-    {
-        $this->zodiac = $zodiac->value;
-    }
-
     public function getTag(): ?Tag
     {
         return Tag::from($this->tag);
@@ -326,6 +331,26 @@ class Profile
     public function setTag(?Tag $tag): void
     {
         $this->tag = $tag;
+    }
+
+    public function getAstrologyHoroscope(): AstrologyHoroscope
+    {
+        return AstrologyHoroscope::from($this->astrologyHoroscope);
+    }
+
+    public function setAstrologyHoroscope(AstrologyHoroscope $astrologyHoroscope): void
+    {
+        $this->astrologyHoroscope = $astrologyHoroscope->value;
+    }
+
+    public function getChineseHoroscope(): ChineseHoroscope
+    {
+        return ChineseHoroscope::from($this->chineseHoroscope);
+    }
+
+    public function setChineseHoroscope(ChineseHoroscope $chineseHoroscope): void
+    {
+        $this->chineseHoroscope = $chineseHoroscope->value;
     }
 
     /**
@@ -344,20 +369,14 @@ class Profile
         $this->hobby = $hobby;
     }
 
-    /**
-     * @return string[]
-     */
-    public function getMedia(): array
+    public function getImages(): ArrayCollection
     {
-        return $this->media;
+        return $this->images;
     }
 
-    /**
-     * @param string[] $media
-     */
-    public function setMedia(array $media): void
+    public function setImages(ArrayCollection $images): void
     {
-        $this->media = $media;
+        $this->images = $images;
     }
 
     public function getDescription(): ?string
@@ -368,23 +387,6 @@ class Profile
     public function setDescription(?string $description): void
     {
         $this->description = $description;
-    }
-
-    public function setMatchingZodiacs(): void
-    {
-        $result = $this->calculateMatchingZodiac(
-            $this->getZodiac()
-        );
-
-        $this->matchingZodiacs = $result;
-    }
-
-    /**
-     * @return int[]
-     */
-    public function getMatchingZodiacs(): array
-    {
-        return $this->matchingZodiacs;
     }
 
     public function setActive(bool $active): void
@@ -412,9 +414,29 @@ class Profile
         $this->lang = $lang;
     }
 
-    public function calculateMatchingZodiac(Zodiac $zodiac): array
+    public function addImage(Image $image): void
     {
-        return [];
+        $this->images[] = $image;
+    }
+
+    public function isPrivateMode(): bool
+    {
+        return $this->privateMode;
+    }
+
+    public function setPrivateMode(bool $privateMode): void
+    {
+        $this->privateMode = $privateMode;
+    }
+
+    public function getLastActivity(): ?\DateTimeImmutable
+    {
+        return $this->lastActivity;
+    }
+
+    public function setLastActivity(?\DateTimeImmutable $lastActivity): void
+    {
+        $this->lastActivity = $lastActivity;
     }
 
     public function getCreatedAt(): \DateTimeImmutable

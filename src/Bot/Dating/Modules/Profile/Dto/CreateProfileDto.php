@@ -22,7 +22,7 @@ class CreateProfileDto extends BaseDto
     protected ?int $couple = null;
     protected ?int $platform = null;
     protected ?int $tag = null;
-    protected ?array $media = null;
+    protected ?array $images = null;
     protected ?array $hobby = null;
 
     protected function className(): string
@@ -80,9 +80,9 @@ class CreateProfileDto extends BaseDto
         return Tag::from($this->platform);
     }
 
-    public function getMedia(): ?array
+    public function getImages(): ?array
     {
-        return $this->media;
+        return $this->images;
     }
 
     public function getHobby(): ?array
