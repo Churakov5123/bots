@@ -40,6 +40,7 @@ class CreateProfileService
             $dto->getGender(),
             $dto->getPlatform(),
             $dto->getCouple(),
+            $dto->getSearchAgeDiapazone(),
             $dto->getTag(),
             $dto->getDescription(),
             $dto->getHobby(),

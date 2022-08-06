@@ -9,6 +9,7 @@ use App\Bot\Dating\Modules\Horoscope\Enum\ChineseHoroscope;
 use App\Bot\Dating\Modules\Profile\Enum\Couple;
 use App\Bot\Dating\Modules\Profile\Enum\Gender;
 use App\Bot\Dating\Modules\Profile\Enum\Platform;
+use App\Bot\Dating\Modules\Profile\Enum\SearchMode;
 use App\Bot\Dating\Modules\Profile\Enum\Tag;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
@@ -20,7 +21,12 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table(indexes={
  *      @ORM\Index(columns={"login"}),
  *      @ORM\Index(columns={"is_active"}),
- *      @ORM\Index(columns={"is_private_mode"}),
+ *      @ORM\Index(columns={"city"}),
+ *      @ORM\Index(columns={"astrology_horoscope"}),
+ *      @ORM\Index(columns={"chinese_horoscope"}),
+ *      @ORM\Index(columns={"age"}),
+ *      @ORM\Index(columns={"tag"}),
+ *      @ORM\Index(columns={"last_activity"}),
  *      @ORM\Index(columns={"created_at"}),
  * })
  *
@@ -59,7 +65,23 @@ class Profile
      *
      * @Serializer\Expose
      */
-    public \DateTime $birthDate;
+    protected \DateTime $birthDate;
+
+    /**
+     * @ORM\Column(type="integer")
+     *
+     * @Serializer\Expose
+     */
+    protected int $age;
+
+    /**
+     * @var int[]
+     *
+     * @ORM\Column(type="json")
+     *
+     * @Serializer\Expose
+     */
+    protected array $searchAgeDiapazone;
 
     /**
      * @ORM\Column(type="string",  length=2)
@@ -99,6 +121,14 @@ class Profile
      * @Serializer\Expose
      */
     protected int $couple;
+
+    /**
+     * @ORM\Column(type="smallint")
+     * @Assert\Choice(callback={"App\Bot\Dating\Modules\Profile\Enum\SearchMode", "SearchMode::cases()"})
+     *
+     * @Serializer\Expose
+     */
+    protected int $searchMode;
 
     /**
      * @ORM\Column(type="smallint")
@@ -172,13 +202,6 @@ class Profile
     protected bool $active = false;
 
     /**
-     * @ORM\Column(name="is_private_mode", type="boolean")
-     *
-     * @Serializer\Expose
-     */
-    protected bool $privateMode = false;
-
-    /**
      * @ORM\Column(type="datetime_immutable")
      *
      * @Serializer\Expose
@@ -203,7 +226,7 @@ class Profile
         Gender $gender,
         Platform $platform,
         Couple $couple,
-
+        array $searchAgeDiapazone,
         ?Tag $tag = null,
         ?string $description = null,
         ?array $hobby = null,
@@ -218,7 +241,9 @@ class Profile
         $this->gender = $gender->value;
         $this->platform = $platform->value;
         $this->couple = $couple->value;
-        $this->privateMode = false;
+        $this->searchMode = SearchMode::from(1)->value; // тут пока будет базовый поиск но потом можно будет менять режим поиска
+        $this->age = $this->calculateAge(new \DateTime($birthDate));
+        $this->searchAgeDiapazone = $searchAgeDiapazone;
         $this->tag = $tag?->value;
         $this->description = $description;
         $this->images = new ArrayCollection();
@@ -227,6 +252,7 @@ class Profile
         $this->locale = 'ru';
         $this->lang = 'ru';
         $this->active = true;
+        $this->lastActivity = new \DateTimeImmutable();
         $this->createdAt = new \DateTimeImmutable();
     }
 
@@ -353,17 +379,11 @@ class Profile
         $this->chineseHoroscope = $chineseHoroscope->value;
     }
 
-    /**
-     * @return string[]
-     */
     public function getHobby(): array
     {
         return $this->hobby;
     }
 
-    /**
-     * @param string[] $hobby
-     */
     public function setHobby(array $hobby): void
     {
         $this->hobby = $hobby;
@@ -419,14 +439,41 @@ class Profile
         $this->images[] = $image;
     }
 
-    public function isPrivateMode(): bool
+    public function calculateAge(\DateTime $birthDate): int
     {
-        return $this->privateMode;
+        $diff = (((new \DateTime())->getTimestamp() - $birthDate->getTimestamp()) / (60 * 60 * 24 * 365));
+
+        return (int) floor($diff);
     }
 
-    public function setPrivateMode(bool $privateMode): void
+    public function getAge(): int
     {
-        $this->privateMode = $privateMode;
+        return $this->age;
+    }
+
+    public function setAge(\DateTime $birthDate): void
+    {
+        $this->age = $this->calculateAge($birthDate);
+    }
+
+    public function getSearchMode(): SearchMode
+    {
+        return SearchMode::from($this->searchMode);
+    }
+
+    public function setSearchMode(SearchMode $searchMode): void
+    {
+        $this->searchMode = $searchMode->value;
+    }
+
+    public function getSearchAgeDiapazone(): array
+    {
+        return $this->searchAgeDiapazone;
+    }
+
+    public function setSearchAgeDiapazone(array $searchAgeDiapazone): void
+    {
+        $this->searchAgeDiapazone = $searchAgeDiapazone;
     }
 
     public function getLastActivity(): ?\DateTimeImmutable

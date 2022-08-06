@@ -105,6 +105,15 @@ class CreateProfileRequest extends BaseRequest
     /**
      * @Assert\Collection(
      *     fields={
+     *         "popular"  =  @Assert\Optional({@Assert\Type("integer")}),
+     *     },
+     *     allowMissingFields = true
+     * )  */
+    protected ?array $searchAgeDiapazone = null;
+
+    /**
+     * @Assert\Collection(
+     *     fields={
      *         "popular"  =  @Assert\Optional({@Assert\Type("string")}),
      *     },
      *     allowMissingFields = true

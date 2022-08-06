@@ -22,6 +22,7 @@ class CreateProfileDto extends BaseDto
     protected ?int $couple = null;
     protected ?int $platform = null;
     protected ?int $tag = null;
+    protected ?array $searchAgeDiapazone = null;
     protected ?array $images = null;
     protected ?array $hobby = null;
 
@@ -83,6 +84,11 @@ class CreateProfileDto extends BaseDto
     public function getImages(): ?array
     {
         return $this->images;
+    }
+
+    public function getSearchAgeDiapazone(): ?array
+    {
+        return $this->searchAgeDiapazone;
     }
 
     public function getHobby(): ?array
