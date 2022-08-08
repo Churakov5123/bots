@@ -11,4 +11,5 @@ enum SearchMode: int
     case AstrologyHoroscope = 3;
     case ChineseHoroscope = 4;
     case Taro = 5;
+    case hobby = 6;
 }

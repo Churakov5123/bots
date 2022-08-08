@@ -8,10 +8,12 @@ use App\Bot\Dating\Modules\Horoscope\Enum\AstrologyHoroscope;
 use App\Bot\Dating\Modules\Horoscope\Enum\ChineseHoroscope;
 use App\Bot\Dating\Modules\Profile\Enum\Couple;
 use App\Bot\Dating\Modules\Profile\Enum\Gender;
+use App\Bot\Dating\Modules\Profile\Enum\Hobby;
 use App\Bot\Dating\Modules\Profile\Enum\Platform;
 use App\Bot\Dating\Modules\Profile\Enum\SearchMode;
 use App\Bot\Dating\Modules\Profile\Enum\Tag;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
 use Ramsey\Uuid\Doctrine\UuidGenerator;
@@ -22,10 +24,12 @@ use Symfony\Component\Validator\Constraints as Assert;
  *      @ORM\Index(columns={"login"}),
  *      @ORM\Index(columns={"is_active"}),
  *      @ORM\Index(columns={"city"}),
+ *      @ORM\Index(columns={"country_code"}),
  *      @ORM\Index(columns={"astrology_horoscope"}),
  *      @ORM\Index(columns={"chinese_horoscope"}),
  *      @ORM\Index(columns={"age"}),
  *      @ORM\Index(columns={"tag"}),
+ *      @ORM\Index(columns={"search_mode"}),
  *      @ORM\Index(columns={"last_activity"}),
  *      @ORM\Index(columns={"created_at"}),
  * })
@@ -169,16 +173,15 @@ class Profile
     /**
      * @ORM\OneToMany(targetEntity="Image", mappedBy="profile")
      */
-    protected ArrayCollection $images;
+    protected Collection $images;
 
     /**
-     * @var string[]
-     *
-     * @ORM\Column(type="json")
+     * @ORM\Column(type="smallint", nullable=true)
+     * @Assert\Choice(callback={"App\Bot\Dating\Modules\Profile\Enum\Hobby", "Hobby::cases()"})
      *
      * @Serializer\Expose
      */
-    protected array $hobby = [];
+    protected ?int $hobby = null;
 
     /**
      * @ORM\Column(type="string", length=5)
@@ -218,7 +221,7 @@ class Profile
     public function __construct(
         string $login,
         string $name,
-        string $birthDate,
+        \DateTime $birthDate,
         AstrologyHoroscope $astrologyHoroscope,
         ChineseHoroscope $chineseHoroscope,
         string $countryCode,
@@ -229,11 +232,11 @@ class Profile
         array $searchAgeDiapazone,
         ?Tag $tag = null,
         ?string $description = null,
-        ?array $hobby = null,
+        ?Hobby $hobby = null,
     ) {
         $this->login = $login;
         $this->name = $name;
-        $this->birthDate = new \DateTime($birthDate);
+        $this->birthDate = $birthDate;
         $this->astrologyHoroscope = $astrologyHoroscope->value;
         $this->chineseHoroscope = $chineseHoroscope->value;
         $this->countryCode = $countryCode;
@@ -242,12 +245,12 @@ class Profile
         $this->platform = $platform->value;
         $this->couple = $couple->value;
         $this->searchMode = SearchMode::from(1)->value; // тут пока будет базовый поиск но потом можно будет менять режим поиска
-        $this->age = $this->calculateAge(new \DateTime($birthDate));
+        $this->age = $this->calculateAge($birthDate);
         $this->searchAgeDiapazone = $searchAgeDiapazone;
         $this->tag = $tag?->value;
         $this->description = $description;
         $this->images = new ArrayCollection();
-        $this->hobby = $hobby ?? [];
+        $this->hobby = $hobby;
 
         $this->locale = 'ru';
         $this->lang = 'ru';
@@ -379,22 +382,28 @@ class Profile
         $this->chineseHoroscope = $chineseHoroscope->value;
     }
 
-    public function getHobby(): array
+    public function getHobby(): ?Hobby
     {
-        return $this->hobby;
+        return $this->hobby ? Hobby::from($this->hobby) : $this->hobby;
     }
 
-    public function setHobby(array $hobby): void
+    public function setHobby(?Hobby $hobby): void
     {
-        $this->hobby = $hobby;
+        $this->hobby = $hobby->value;
     }
 
-    public function getImages(): ArrayCollection
+    /**
+     * @return iterable|Image[]
+     */
+    public function getImages(): iterable
     {
         return $this->images;
     }
 
-    public function setImages(ArrayCollection $images): void
+    /**
+     * @param ArrayCollection|Image[] $images
+     */
+    public function setImages(iterable $images): void
     {
         $this->images = $images;
     }

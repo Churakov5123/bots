@@ -94,27 +94,25 @@ class CreateProfileRequest extends BaseRequest
     protected ?int $tag = null;
 
     /**
-     * @Assert\Collection(
-     *     fields={
-     *         "popular"  =  @Assert\Optional({@Assert\Type("string")}),
-     *     },
-     *     allowMissingFields = true
-     * )  */
+     * @Assert\Sequentially({
+     *     @Assert\Type(type="array"),
+     *     @Assert\Count(min=1, max=5),
+     * })
+     */
     protected ?array $images = null;
 
     /**
-     * @Assert\Collection(
-     *     fields={
-     *         "popular"  =  @Assert\Optional({@Assert\Type("integer")}),
-     *     },
-     *     allowMissingFields = true
-     * )  */
+     * @Assert\Sequentially({
+     *     @Assert\Type(type="array"),
+     *     @Assert\Count(min=2, max=2),
+     * })
+     */
     protected ?array $searchAgeDiapazone = null;
 
     /**
      * @Assert\Collection(
-     *     fields={
-     *         "popular"  =  @Assert\Optional({@Assert\Type("string")}),
+     *      fields={
+     *         "img"  = @Assert\Required({@Assert\NotBlank, @Assert\Type("string")}),
      *     },
      *     allowMissingFields = true
      * )  */

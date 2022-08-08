@@ -12,18 +12,19 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class ImageHandler
 {
-    private const IMG_BASE_FORMAT = 'png';
-    private const IMG_BASE_PATH = 'png';
+    private const IMG_BASE_FORMAT = '.png';
+    private const IMG_BASE_PATH = 'photo';
 
     public function __construct(private ImageRepository $imageRepository
     ) {
     }
 
-    public function execute(Profile $profile, CreateProfileDto $dto, UploadedFile $image)
+    public function execute(Profile $profile, CreateProfileDto $dto, string $image)
     {
         // validation image тут будет какоего ограничение на максимальный размер! подумать- если ок то пускаем далее
         $newImage = $this->makeImage($dto, $profile);
 
+        dd($newImage);
         // логика по обрезке и декодированию и сохранению в стору исходя из пути
         $prepareImage = $this->prepareImage($image);
 
@@ -31,11 +32,14 @@ class ImageHandler
         $this->uploadImage($prepareImage, $newImage);
     }
 
-    private function makeImage(CreateProfileDto $dto, Profile $profile)
+    private function makeImage(CreateProfileDto $dto, Profile $profile): Image
     {
+        $name = sprintf('%s%s', uniqid(), self::IMG_BASE_FORMAT);
+        $path = sprintf('/%s/%s/%s', self::IMG_BASE_PATH, $dto->getLogin(), $name);
+
         $image = new Image(
-            sprintf('%s_%s.jpg', $dto->getLogin(), uniqid()),
-            self::IMG_BASE_PATH.$dto->getLogin().'/'.sprintf('%s_%s.%s', $dto->getLogin(), uniqid(), self::IMG_BASE_FORMAT),
+            $name,
+            $path,
             $profile
         );
 

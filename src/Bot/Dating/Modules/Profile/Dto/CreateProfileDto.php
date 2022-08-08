@@ -24,7 +24,7 @@ class CreateProfileDto extends BaseDto
     protected ?int $tag = null;
     protected ?array $searchAgeDiapazone = null;
     protected ?array $images = null;
-    protected ?array $hobby = null;
+    protected ?int $hobby = null;
 
     protected function className(): string
     {
@@ -91,7 +91,7 @@ class CreateProfileDto extends BaseDto
         return $this->searchAgeDiapazone;
     }
 
-    public function getHobby(): ?array
+    public function getHobby(): ?int
     {
         return $this->hobby;
     }
