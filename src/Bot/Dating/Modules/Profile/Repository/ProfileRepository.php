@@ -15,6 +15,19 @@ class ProfileRepository extends ServiceEntityRepository
         parent::__construct($registry, Profile::class);
     }
 
+    public function getProfileByLogin(string $login): ?Profile
+    {
+        return $this
+            ->createQueryBuilder('a')
+            ->where('a.login = :login')
+            ->setParameters([
+                'login' => $login,
+            ])
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
     public function save(Profile $group): void
     {
         $em = $this->getEntityManager();

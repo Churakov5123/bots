@@ -51,7 +51,7 @@ class Profile
     protected ?string $id = null;
 
     /**
-     * @ORM\Column(type="string", length=64)
+     * @ORM\Column(type="string", length=64, unique=true)
      *
      * @Serializer\Expose
      */

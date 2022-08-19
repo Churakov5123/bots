@@ -8,6 +8,7 @@
 /.env
 /config/secrets/prod/prod.decrypt.private.php
 /public/bundles/
+/public/storage/
 /var/*
 /var/cache/*
 /var/log/*
