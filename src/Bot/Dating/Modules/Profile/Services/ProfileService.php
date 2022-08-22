@@ -30,7 +30,7 @@ class ProfileService
         $result = $this->profileRepository->getProfileByLogin($dto->getLogin());
 
         if (null !== $result) {
-            throw new Exception('Profile all ready to exist');
+            throw new Exception('Profile all ready exist', 403);
         }
 
         $horoscope = new HoroscopeService($dto->getBirthDate());
@@ -113,7 +113,7 @@ class ProfileService
         $profile = $this->profileRepository->find($id);
 
         if (null === $profile) {
-            throw new Exception('Profile not found');
+            throw new Exception('Profile not found', 404);
         }
 
         return $profile;

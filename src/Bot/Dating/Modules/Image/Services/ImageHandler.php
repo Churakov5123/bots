@@ -18,10 +18,11 @@ class ImageHandler
     ) {
     }
 
-    public function execute(Profile $profile, CreateProfileDto $dto, string $base64Content)
+    public function execute(Profile $profile, CreateProfileDto $dto, string $base64Content): void
     {
         // validation image тут будет какоего ограничение на максимальный размер! подумать- если ок то пускаем далее
         $newImage = $this->makeImage($dto, $profile);
+
         $profile->addImage($newImage);
         //  логика по обрезке и декодированию и сохранению в стору исходя из пути
         $prepareImage = $this->prepareImage($base64Content, $newImage);
@@ -36,7 +37,7 @@ class ImageHandler
         $path = sprintf('%s/%s/', self::IMG_BASE_PATH, $dto->getLogin());
 
         if (!file_exists($path)) {
-            mkdir($path, 0755, true);
+            mkdir($path, 0777, true);
         }
 
         $image = new Image(

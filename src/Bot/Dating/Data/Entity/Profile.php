@@ -171,7 +171,12 @@ class Profile
     protected ?string $description = null;
 
     /**
-     * @ORM\OneToMany(targetEntity="Image", mappedBy="profile")
+     * @var Image[]|ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity="Image", mappedBy="profile",cascade={"persist", "remove"})
+     * @Serializer\Expose
+     * @Serializer\Accessor(setter="setImages")
+     * @Serializer\SerializedName("images")
      */
     protected Collection $images;
 
@@ -443,9 +448,11 @@ class Profile
         $this->lang = $lang;
     }
 
-    public function addImage(Image $image): void
+    public function addImage(Image $img): void
     {
-        $this->images[] = $image;
+        $img->setProfile($this);
+
+        $this->images[] = $img;
     }
 
     public function calculateAge(\DateTime $birthDate): int

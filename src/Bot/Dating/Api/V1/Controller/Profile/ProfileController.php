@@ -36,13 +36,16 @@ class ProfileController extends AbstractController
 
         try {
             $result = $this->profileService->make($dto);
-        } catch (\Exception $e) {
-            $result = $e->getMessage();
-        }
 
-        return JsonResponse::fromJsonString(
-            $this->serializer->serialize($result, 'json')
-        );
+            return JsonResponse::fromJsonString(
+                $this->serializer->serialize($result, 'json'),
+            );
+        } catch (\Exception $e) {
+            return JsonResponse::fromJsonString(
+                $this->serializer->serialize($e->getMessage(), 'json'),
+                $e->getCode()
+            );
+        }
     }
 
     /**
@@ -54,13 +57,16 @@ class ProfileController extends AbstractController
 
         try {
             $result = $this->profileService->read($dto->getId());
-        } catch (\Exception $e) {
-            $result = $e->getMessage();
-        }
 
-        return JsonResponse::fromJsonString(
-            $this->serializer->serialize($result, 'json')
-        );
+            return JsonResponse::fromJsonString(
+                $this->serializer->serialize($result, 'json'),
+            );
+        } catch (\Exception $e) {
+            return JsonResponse::fromJsonString(
+                $this->serializer->serialize($e->getMessage(), 'json'),
+                $e->getCode()
+            );
+        }
     }
 
     /**
@@ -72,13 +78,16 @@ class ProfileController extends AbstractController
 
         try {
             $result = $this->profileService->update($dto);
-        } catch (\Exception $e) {
-            $result = $e->getMessage();
-        }
 
-        return JsonResponse::fromJsonString(
-            $this->serializer->serialize($result, 'json')
-        );
+            return JsonResponse::fromJsonString(
+                $this->serializer->serialize($result, 'json'),
+            );
+        } catch (\Exception $e) {
+            return JsonResponse::fromJsonString(
+                $this->serializer->serialize($e->getMessage(), 'json'),
+                $e->getCode()
+            );
+        }
     }
 
     /**
@@ -92,12 +101,15 @@ class ProfileController extends AbstractController
             $this->profileService->delete($dto->getId());
 
             $result = 'Profile deleted successfully';
-        } catch (\Exception $e) {
-            $result = $e->getMessage();
-        }
 
-        return JsonResponse::fromJsonString(
-            $this->serializer->serialize($result, 'json')
-        );
+            return JsonResponse::fromJsonString(
+                $this->serializer->serialize($result, 'json'),
+            );
+        } catch (\Exception $e) {
+            return JsonResponse::fromJsonString(
+                $this->serializer->serialize($e->getMessage(), 'json'),
+                $e->getCode()
+            );
+        }
     }
 }
