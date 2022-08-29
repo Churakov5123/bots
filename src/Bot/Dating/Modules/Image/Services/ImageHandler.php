@@ -22,7 +22,6 @@ class ImageHandler
     {
         // validation image тут будет какоего ограничение на максимальный размер! подумать- если ок то пускаем далее
         $newImage = $this->makeImage($dto, $profile);
-
         $profile->addImage($newImage);
         //  логика по обрезке и декодированию и сохранению в стору исходя из пути
         $prepareImage = $this->prepareImage($base64Content, $newImage);
@@ -37,7 +36,10 @@ class ImageHandler
         $path = sprintf('%s/%s/', self::IMG_BASE_PATH, $dto->getLogin());
 
         if (!file_exists($path)) {
-            mkdir($path, 0777, true);
+            try{
+                mkdir($path, 0777, true);
+            }catch(\Exception $e) {
+            }
         }
 
         $image = new Image(
@@ -66,21 +68,12 @@ class ImageHandler
 
     private function prepareImage(string $base64Content, Image $image): void
     {
-        // добавить проверку на не поддерживаемый формат
-
-        // этот созраняет - но надо делать в едином формате
+     //а тут по хорошему надо  делать обработку в оп
         file_put_contents($image->getPath().$image->getName().'.jpeg', file_get_contents($base64Content));
-
-        // пока не доделал
-//        $newImage = ImageResize::createFromString(base64_decode($base64Content));
-//        dd($newImage);
-//        $newImage->scale(50);
-//        $newImage->save($image->getPath() . $image->getName(), IMAGETYPE_PNG);
-//        dd($newImage);
     }
 
     private function uploadImage(string $base64Content, Image $image): void
-    {
+    { //  по идеии тут сохранение
         file_put_contents($image->getPath().$image->getName(), file_get_contents($base64Content));
     }
 }

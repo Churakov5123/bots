@@ -58,7 +58,7 @@ class ProfileService
 
         if (null !== $dto->getImages()) {
             foreach ($dto->getImages() as $image) {
-                /* @var  $image */
+                /* @var  string $image */
                 $this->imageHandler->execute($newProfile, $dto, $image);
             }
         }
