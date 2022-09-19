@@ -42,7 +42,7 @@ class ProfileController extends AbstractController
             );
         } catch (\Exception $e) {
             return JsonResponse::fromJsonString(
-                $this->serializer->serialize(['error'=>$e->getMessage()], 'json'),
+                $this->serializer->serialize(['error' => $e->getMessage()], 'json'),
                 $e->getCode()
             );
         }

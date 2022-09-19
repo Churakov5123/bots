@@ -109,12 +109,5 @@ class CreateProfileRequest extends BaseRequest
      */
     protected ?array $searchAgeDiapazone = null;
 
-    /**
-     * @Assert\Collection(
-     *      fields={
-     *         "img"  = @Assert\Required({@Assert\NotBlank, @Assert\Type("string")}),
-     *     },
-     *     allowMissingFields = true
-     * )  */
     protected ?array $hobby = null;
 }

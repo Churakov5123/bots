@@ -1,9 +1,8 @@
 version: "3.0"
 services:
     db:
-        image: 'mariadb:10.3'
+        image: mysql:5.7
         restart: always
-        command: --default-authentication-plugin=mysql_native_password
         networks:
             - internal
         env_file: ./docker/.env
