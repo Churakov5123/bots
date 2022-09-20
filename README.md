@@ -18,3 +18,5 @@
 <p>Запустить батник ./lint или команды из списка ниже</p>
 <p>./vendor/bin/php-cs-fixer fix src</p>
 <p>./vendor/bin/phpstan analyse  src</p>
+<h3>Список маршрутов:</h3>
+<p>php bin/console debug:router</p>

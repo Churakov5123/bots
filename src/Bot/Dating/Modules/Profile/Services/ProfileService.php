@@ -110,6 +110,7 @@ class ProfileService
      */
     public function read(string $id): Profile
     {
+        /** @var  Profile $profile */
         $profile = $this->profileRepository->find($id);
 
         if (null === $profile) {
@@ -122,12 +123,42 @@ class ProfileService
     /**
      * @throws Exception
      */
-    public function delete(string $id): void
+    public function deactivate(string $id): void
     {
         $profile = $this->read($id);
+
+        if (!$profile->isActive()) {
+            throw new Exception('Profile already not active', 200);
+        }
 
         $profile->setActive(false);
 
         $this->profileRepository->save($profile);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function activate(string $id): void
+    {
+        $profile = $this->read($id);
+
+        if ($profile->isActive()) {
+            throw new Exception('Profile is active', 200);
+        }
+
+        $profile->setActive(true);
+
+        $this->profileRepository->save($profile);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function delete(string $id): void
+    {
+        $profile = $this->read($id);
+
+        $this->profileRepository->delete($profile);
     }
 }

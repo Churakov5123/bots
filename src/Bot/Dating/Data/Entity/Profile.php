@@ -274,7 +274,7 @@ class Profile
 
     public function isActive(): bool
     {
-        return $this->active;
+        return $this->active === true;
     }
 
     public function getLogin(): string

@@ -6,16 +6,14 @@ namespace App\Bot\Dating\Api\V1\Controller\Profile;
 
 use App\Bot\Dating\Modules\Profile\Dto\CreateProfileDto;
 use App\Bot\Dating\Modules\Profile\Dto\ProfileDto;
-use App\Bot\Dating\Modules\Profile\Dto\ReadProfileDto;
 use App\Bot\Dating\Modules\Profile\Requests\CreateProfileRequest;
 use App\Bot\Dating\Modules\Profile\Requests\ProfileRequest;
-use App\Bot\Dating\Modules\Profile\Requests\ReadProfileRequest;
 use App\Bot\Dating\Modules\Profile\Services\ProfileService;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
-
+use Symfony\Component\Routing\Annotation\Route;
 /**
  * @Route("/profile")
  */
@@ -51,12 +49,14 @@ class ProfileController extends AbstractController
     /**
      * @Route("/{id}", methods={"GET"})
      */
-    public function read(ReadProfileRequest $request): JsonResponse
+    public function read(?string $id = null): JsonResponse
     {
-        $dto = (new ReadProfileDto())->fillFromBaseRequest($request);
-
         try {
-            $result = $this->profileService->read($dto->getId());
+            if ($id === null) {
+                throw new Exception('Profile not found', 404);
+            }
+
+            $result = $this->profileService->read($id);
 
             return JsonResponse::fromJsonString(
                 $this->serializer->serialize($result, 'json'),
@@ -91,16 +91,68 @@ class ProfileController extends AbstractController
     }
 
     /**
+     * @Route("/deactivate/{id}", methods={"PATCH"})
+     */
+    public function deactivate(?string $id = null): JsonResponse
+    {
+        try {
+            if ($id === null) {
+                throw new Exception('Profile not found', 404);
+            }
+
+            $this->profileService->deactivate($id);
+
+            $result = 'Profile deactivated successfully';
+
+            return JsonResponse::fromJsonString(
+                $this->serializer->serialize($result, 'json'),
+            );
+        } catch (\Exception $e) {
+            return JsonResponse::fromJsonString(
+                $this->serializer->serialize($e->getMessage(), 'json'),
+                $e->getCode()
+            );
+        }
+    }
+
+    /**
+     * @Route("/activate/{id}", methods={"PATCH"})
+     */
+    public function activate(?string $id = null): JsonResponse
+    {
+        try {
+            if ($id === null) {
+                throw new Exception('Profile not found', 404);
+            }
+
+            $this->profileService->activate($id);
+
+            $result = 'Profile activated successfully';
+
+            return JsonResponse::fromJsonString(
+                $this->serializer->serialize($result, 'json'),
+            );
+        } catch (\Exception $e) {
+            return JsonResponse::fromJsonString(
+                $this->serializer->serialize($e->getMessage(), 'json'),
+                $e->getCode()
+            );
+        }
+    }
+
+    /**
      * @Route("/{id}", methods={"DELETE"})
      */
-    public function delete(ReadProfileRequest $request): JsonResponse
+    public function delete(?string $id = null): JsonResponse
     {
-        $dto = (new ReadProfileDto())->fillFromBaseRequest($request);
-
         try {
-            $this->profileService->delete($dto->getId());
+            if ($id === null) {
+                throw new Exception('Profile not found', 404);
+            }
 
-            $result = 'Profile deleted successfully';
+            $this->profileService->delete($id);
+
+            $result = 'Profile delete successfully';
 
             return JsonResponse::fromJsonString(
                 $this->serializer->serialize($result, 'json'),
