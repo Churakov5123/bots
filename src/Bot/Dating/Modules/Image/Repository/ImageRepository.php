@@ -20,18 +20,25 @@ class ImageRepository extends ServiceEntityRepository
     {
         return $this
             ->createQueryBuilder('a')
-            ->where('a.profile_id = :profile_id')
+            ->where('a.profile = :profile')
             ->setParameters([
-                'profile_id' => $profile,
+                'profile' => $profile,
             ])
             ->getQuery()
             ->getResult();
     }
 
-    public function save(Image $group): void
+    public function remove(Image $image): void
     {
         $em = $this->getEntityManager();
-        $em->persist($group);
-        $em->flush($group);
+        $em->remove($image);
+        $em->flush($image);
+    }
+
+    public function save(Image $image): void
+    {
+        $em = $this->getEntityManager();
+        $em->persist($image);
+        $em->flush($image);
     }
 }

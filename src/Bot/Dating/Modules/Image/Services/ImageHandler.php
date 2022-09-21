@@ -8,6 +8,7 @@ use App\Bot\Dating\Data\Entity\Image;
 use App\Bot\Dating\Data\Entity\Profile;
 use App\Bot\Dating\Modules\Image\Repository\ImageRepository;
 use App\Bot\Dating\Modules\Profile\Dto\CreateProfileDto;
+use FilesystemIterator;
 
 class ImageHandler
 {
@@ -25,6 +26,33 @@ class ImageHandler
         $profile->addImage($newImage);
         //  логика по обрезке и декодированию и сохранению в стору исходя из пути
         $this->uploadImage($base64Content, $newImage);
+    }
+
+    public function deleteImages(Profile $profile): void
+    {
+        $result = $this->imageRepository->getImagesByProfile($profile);
+
+        if (empty($result)) {
+            return;
+        }
+
+        // удаляет статику без директории
+        /** @var Image $image */
+        foreach ($result as $image) {
+            $include = new FilesystemIterator($image->getPath());
+            $this->removeDir($include->getRealPath());
+        }
+
+        // удаляет записи в таблице
+        /** @var Image $image */
+        foreach ($result as $image) {
+            $this->imageRepository->remove($image);
+        }
+    }
+
+    private function uploadImage(string $base64Content, Image $image): void
+    {
+        file_put_contents(sprintf('%s%s%s', $image->getPath(), $image->getName(), self::IMG_BASE_FORMAT), file_get_contents($base64Content));
     }
 
     private function makeImage(CreateProfileDto $dto, Profile $profile): Image
@@ -50,21 +78,18 @@ class ImageHandler
         return $image;
     }
 
-    public function deleteImages(Profile $profile): void
+    private function removeDir(string|bool $path): void
     {
-        $result = $this->imageRepository->getImagesByProfile($profile);
-
-        if (empty($result)) {
+        if (false === $path) {
             return;
         }
 
-        foreach ($result as $image) {
-            $this->imageRepository->delete($image);
+        if (is_file($path)) {
+            @unlink($path);
+        } else {
+            array_map('removeDir', glob('/*')) == @rmdir($path);
         }
-    }
 
-    private function uploadImage(string $base64Content, Image $image): void
-    {
-        file_put_contents(sprintf('%s%s%s', $image->getPath(), $image->getName(), self::IMG_BASE_FORMAT), file_get_contents($base64Content));
+        @rmdir($path);
     }
 }

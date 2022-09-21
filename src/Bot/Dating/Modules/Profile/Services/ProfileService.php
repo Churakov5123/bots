@@ -110,7 +110,7 @@ class ProfileService
      */
     public function read(string $id): Profile
     {
-        /** @var  Profile $profile */
+        /** @var Profile $profile */
         $profile = $this->profileRepository->find($id);
 
         if (null === $profile) {
@@ -157,8 +157,15 @@ class ProfileService
      */
     public function delete(string $id): void
     {
-        $profile = $this->read($id);
-
-        $this->profileRepository->delete($profile);
+        try {
+            /** @var Profile $profile */
+            $profile = $this->read($id);
+            // удалить все фото
+            $this->imageHandler->deleteImages($profile);
+            // удалить все записи в таблице картинок
+            $this->profileRepository->remove($profile);
+        } catch (\Exception $e) {
+            throw $e;
+        }
     }
 }

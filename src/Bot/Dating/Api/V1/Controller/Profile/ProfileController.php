@@ -12,8 +12,9 @@ use App\Bot\Dating\Modules\Profile\Services\ProfileService;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\SerializerInterface;
+
 /**
  * @Route("/profile")
  */
@@ -52,7 +53,7 @@ class ProfileController extends AbstractController
     public function read(?string $id = null): JsonResponse
     {
         try {
-            if ($id === null) {
+            if (null === $id) {
                 throw new Exception('Profile not found', 404);
             }
 
@@ -96,7 +97,7 @@ class ProfileController extends AbstractController
     public function deactivate(?string $id = null): JsonResponse
     {
         try {
-            if ($id === null) {
+            if (null === $id) {
                 throw new Exception('Profile not found', 404);
             }
 
@@ -121,7 +122,7 @@ class ProfileController extends AbstractController
     public function activate(?string $id = null): JsonResponse
     {
         try {
-            if ($id === null) {
+            if (null === $id) {
                 throw new Exception('Profile not found', 404);
             }
 
@@ -146,7 +147,7 @@ class ProfileController extends AbstractController
     public function delete(?string $id = null): JsonResponse
     {
         try {
-            if ($id === null) {
+            if (null === $id) {
                 throw new Exception('Profile not found', 404);
             }
 

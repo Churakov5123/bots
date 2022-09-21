@@ -28,10 +28,17 @@ class ProfileRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
-    public function save(Profile $group): void
+    public function remove(Profile $profile): void
     {
         $em = $this->getEntityManager();
-        $em->persist($group);
-        $em->flush($group);
+        $em->remove($profile);
+        $em->flush($profile);
+    }
+
+    public function save(Profile $profile): void
+    {
+        $em = $this->getEntityManager();
+        $em->persist($profile);
+        $em->flush($profile);
     }
 }
