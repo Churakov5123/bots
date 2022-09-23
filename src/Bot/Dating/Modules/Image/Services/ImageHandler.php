@@ -40,7 +40,7 @@ class ImageHandler
         /** @var Image $image */
         foreach ($result as $image) {
             $include = new FilesystemIterator($image->getPath());
-            $this->removeDir($include->getRealPath());
+            $this->removeDirWithFiles($include->getRealPath(), $_SERVER['DOCUMENT_ROOT'].'/'.$include->getPath());
         }
 
         // удаляет записи в таблице
@@ -78,7 +78,7 @@ class ImageHandler
         return $image;
     }
 
-    private function removeDir(string|bool $path): void
+    private function removeDirWithFiles(string|bool $path, string $dirPath): void
     {
         if (false === $path) {
             return;
@@ -86,10 +86,8 @@ class ImageHandler
 
         if (is_file($path)) {
             @unlink($path);
-        } else {
-            array_map('removeDir', glob('/*')) == @rmdir($path);
         }
 
-        @rmdir($path);
+        @rmdir($dirPath);
     }
 }
