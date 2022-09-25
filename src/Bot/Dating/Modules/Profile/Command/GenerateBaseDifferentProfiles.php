@@ -31,7 +31,7 @@ class GenerateBaseDifferentProfiles extends Command
     protected function configure(): void
     {
         $this
-            ->setName('profile:generate base different profiles')
+            ->setName('profile:generate')
             ->setDescription('Generates a pack of 50 different profiles for each gender .');
     }
 
@@ -50,6 +50,11 @@ class GenerateBaseDifferentProfiles extends Command
 
         while ($count < self::BASE_COUNT_PROFILES) {
             $fakeProfile = $this->fakeProfile->getProfile();
+
+            if (empty($fakeProfile)) {
+                return 0;
+            }
+
             $dto = (new CreateProfileDto())->fillFromArray($fakeProfile);
             $profile = $this->profileService->make($dto, true);
 
