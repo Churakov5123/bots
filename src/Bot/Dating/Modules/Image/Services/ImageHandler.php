@@ -40,7 +40,7 @@ class ImageHandler
         /** @var Image $image */
         foreach ($result as $image) {
             $include = new FilesystemIterator($image->getPath());
-            $this->removeDirWithFiles($include->getRealPath(), $_SERVER['DOCUMENT_ROOT'].'/'.$include->getPath());
+            $this->removeDirWithFiles($include->getRealPath(), sprintf('%s%s%s', $_SERVER['DOCUMENT_ROOT'], '/', $include->getPath()));
         }
 
         // удаляет записи в таблице

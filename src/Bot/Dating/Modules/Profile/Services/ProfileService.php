@@ -25,7 +25,7 @@ class ProfileService
     /**
      * @throws Exception
      */
-    public function make(CreateProfileDto $dto): Profile
+    public function make(CreateProfileDto $dto, bool $isFake = false): Profile
     {
         $result = $this->profileRepository->getProfileByLogin($dto->getLogin());
 
@@ -53,6 +53,8 @@ class ProfileService
             $dto->getDescription(),
             $dto->getHobby(),
         );
+
+        $newProfile->setFake($isFake);
 
         if (null !== $dto->getImages()) {
             foreach ($dto->getImages() as $image) {

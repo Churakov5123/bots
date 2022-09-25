@@ -23,6 +23,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table(indexes={
  *      @ORM\Index(columns={"login"}),
  *      @ORM\Index(columns={"is_active"}),
+ *      @ORM\Index(columns={"is_fake"}),
  *      @ORM\Index(columns={"city"}),
  *      @ORM\Index(columns={"country_code"}),
  *      @ORM\Index(columns={"astrology_horoscope"}),
@@ -208,6 +209,13 @@ class Profile
      * @Serializer\Expose
      */
     protected bool $active = false;
+
+    /**
+     * @ORM\Column(name="is_fake", type="boolean")
+     *
+     * @Serializer\Expose
+     */
+    protected bool $fake = false;
 
     /**
      * @ORM\Column(type="datetime_immutable")
@@ -490,6 +498,11 @@ class Profile
     public function setSearchAgeDiapazone(array $searchAgeDiapazone): void
     {
         $this->searchAgeDiapazone = $searchAgeDiapazone;
+    }
+
+    public function setFake(bool $fake): void
+    {
+        $this->fake = $fake;
     }
 
     public function getLastActivity(): ?\DateTimeImmutable
