@@ -364,7 +364,7 @@ class Profile
 
     public function setTag(?Tag $tag): void
     {
-        $this->tag = $tag;
+        $this->tag = $tag->value;
     }
 
     public function getAstrologyHoroscope(): AstrologyHoroscope
@@ -394,7 +394,7 @@ class Profile
 
     public function setHobby(?Hobby $hobby): void
     {
-        $this->hobby = $hobby->value;
+        $this->hobby = $hobby?->value;
     }
 
     /**

@@ -13,5 +13,17 @@ class ProfileRequest extends CreateProfileRequest
      * @Assert\NotNull,
      * @Assert\Type("string")
      */
-    protected string $id;
+    protected string $lang;
+
+    /**
+     * @Assert\NotBlank,
+     * @Assert\NotNull,
+     * @Assert\Type("string")
+     */
+    protected string $locale;
+
+    /**
+     * @Assert\Choice({1,2,3,4,5,6})
+     */
+    protected int $searchMode;
 }

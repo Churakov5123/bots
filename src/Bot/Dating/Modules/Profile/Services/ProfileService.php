@@ -54,8 +54,6 @@ class ProfileService
             $dto->getHobby(),
         );
 
-        $this->profileRepository->save($newProfile);
-
         if (null !== $dto->getImages()) {
             foreach ($dto->getImages() as $image) {
                 /* @var  string $image */
@@ -63,33 +61,32 @@ class ProfileService
             }
         }
 
+        $this->profileRepository->save($newProfile);
+
         return $newProfile;
     }
 
     /**
      * @throws Exception
      */
-    public function update(ProfileDto $dto): Profile
+    public function update(Profile $profile, ProfileDto $dto): Profile
     {
-        $profile = $this->read($dto->getId());
-
-        $profile->setAge();
-        $profile->setBirthDate();
-        $profile->setCity();
-        $profile->setCountryCode();
-        $profile->setCouple();
-        $profile->setDescription();
-        $profile->setGender();
-        $profile->setHobby();
-        $profile->setImages();
-        $profile->setLang();
-        $profile->setLocale();
-        $profile->setLogin();
-        $profile->setPlatform();
-        $profile->setName();
-        $profile->setSearchAgeDiapazone();
-        $profile->setSearchMode();
-        $profile->setTag();
+        $profile->setAge($dto->getBirthDate());
+        $profile->setBirthDate($dto->getBirthDate());
+        $profile->setCity($dto->getCity());
+        $profile->setCountryCode($dto->getCountryCode());
+        $profile->setCouple($dto->getCouple());
+        $profile->setDescription($dto->getDescription());
+        $profile->setGender($dto->getGender());
+        $profile->setHobby($dto->getHobby());
+        $profile->setLang($dto->getLang());
+        $profile->setLocale($dto->getLocale());
+        $profile->setLogin($dto->getLogin());
+        $profile->setPlatform($dto->getPlatform());
+        $profile->setName($dto->getName());
+        $profile->setSearchAgeDiapazone($dto->getSearchAgeDiapazone());
+        $profile->setSearchMode($dto->getSearchMode());
+        $profile->setTag($dto->getTag());
 
         $this->profileRepository->save($profile);
 

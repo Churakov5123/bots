@@ -78,7 +78,7 @@ class CreateProfileDto extends BaseDto
 
     public function getTag(): ?Tag
     {
-        return Tag::from($this->platform);
+        return Tag::from($this->tag);
     }
 
     public function getImages(): ?array

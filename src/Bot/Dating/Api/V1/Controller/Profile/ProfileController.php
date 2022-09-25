@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Bot\Dating\Api\V1\Controller\Profile;
 
+use App\Bot\Dating\Data\Entity\Profile;
 use App\Bot\Dating\Modules\Profile\Dto\CreateProfileDto;
 use App\Bot\Dating\Modules\Profile\Dto\ProfileDto;
 use App\Bot\Dating\Modules\Profile\Requests\CreateProfileRequest;
@@ -73,12 +74,18 @@ class ProfileController extends AbstractController
     /**
      * @Route("/{id}", methods={"PATCH"})
      */
-    public function update(ProfileRequest $request): JsonResponse
+    public function update(ProfileRequest $request, ?string $id = null): JsonResponse
     {
-        $dto = (new ProfileDto())->fillFromBaseRequest($request);
-
         try {
-            $result = $this->profileService->update($dto);
+            if (null === $id) {
+                throw new Exception('Profile not found', 404);
+            }
+            /** @var Profile $profile */
+            $profile = $this->profileService->read($id);
+
+            $dto = (new ProfileDto())->fillFromBaseRequest($request);
+
+            $result = $this->profileService->update($profile, $dto);
 
             return JsonResponse::fromJsonString(
                 $this->serializer->serialize($result, 'json'),
