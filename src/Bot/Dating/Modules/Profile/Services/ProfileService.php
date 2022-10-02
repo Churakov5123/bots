@@ -33,10 +33,15 @@ class ProfileService
             throw new Exception('Profile all ready exist', 403);
         }
 
-        $horoscope = new HoroscopeService($dto->getBirthDate());
-        $astrologyHoroscope = AstrologyHoroscope::from($horoscope->getAstrologyHoroscope()->getKey());
-        $chineseHoroscope = ChineseHoroscope::from($horoscope->getChineseHoroscope()->getKey());
-        // еще будет сервис по таро - получение карты для последующей сверки ------
+        try {
+            $horoscope = new HoroscopeService($dto->getBirthDate());
+            $astrologyHoroscope = AstrologyHoroscope::from($horoscope->getAstrologyHoroscope()->getKey());
+            $chineseHoroscope = ChineseHoroscope::from($horoscope->getChineseHoroscope()->getKey());
+            // еще будет сервис по таро - получение карты для последующей сверки ------
+        } catch (\Exception $e) {
+            dd($e);
+        }
+
         $newProfile = new Profile(
             $dto->getLogin(),
             $dto->getName(),

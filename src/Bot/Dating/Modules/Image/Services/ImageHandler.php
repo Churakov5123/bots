@@ -65,6 +65,7 @@ class ImageHandler
             try {
                 mkdir($path, 0777, true);
             } catch (\Exception $e) {
+                dd($e);
             }
         }
 

@@ -84,7 +84,22 @@ class CalculateHoroscope
         foreach (self::ASTROLOGY_CALENDAR as $zodiac) {
             if (
                 $date >= strtotime($year.'-'.$zodiac['start']) &&
-                $date <= strtotime($year.'-'.$zodiac['end'].self::END_DAY)
+                $date <= strtotime($year.'-'.$zodiac['end'].' '.self::END_DAY)
+            ) {
+                return new HoroscopeValueObject(
+                    $zodiac['name'],
+                    $zodiac['key'],
+                    $zodiac['unicode'],
+                    $zodiac['start'],
+                    $zodiac['end'],
+                    Calendar::from(Calendar::Astrology->value),
+                    $zodiac['description'],
+                );
+            }
+
+            if (
+                $date >= strtotime(($year).'-'.$zodiac['start']) &&
+                $date <= strtotime(($year + 1).'-'.$zodiac['end'].' '.self::END_DAY)
             ) {
                 return new HoroscopeValueObject(
                     $zodiac['name'],
@@ -98,7 +113,22 @@ class CalculateHoroscope
             }
         }
 
-        throw new Exception('HoroscopeValueObject is not found');
+        if (
+            $date >= strtotime(($year - 1).'-'.$zodiac['start']) &&
+            $date <= strtotime(($year).'-'.$zodiac['end'].' '.self::END_DAY)
+        ) {
+            return new HoroscopeValueObject(
+                $zodiac['name'],
+                $zodiac['key'],
+                $zodiac['unicode'],
+                $zodiac['start'],
+                $zodiac['end'],
+                Calendar::from(Calendar::Astrology->value),
+                $zodiac['description'],
+            );
+        }
+
+        throw new Exception('AstrologyHoroscope is not found');
     }
 
     /**
@@ -120,6 +150,6 @@ class CalculateHoroscope
             }
         }
 
-        throw new Exception('HoroscopeValueObject is not found');
+        throw new Exception('ChineseHoroscope is not found');
     }
 }

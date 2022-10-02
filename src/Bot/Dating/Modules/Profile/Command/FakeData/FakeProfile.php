@@ -335,12 +335,12 @@ class FakeProfile
             'locale' => 'ru', // пока будет россия
             'login' => sprintf('%s%s', '@', BaseHelper::generateRandomString()),
             'name' => $this->getRandomNameByGender($gender),
-            'birthDate' => sprintf('%s-%s-%s', rand(01, 30), rand(01, 12), rand(1985, 2004)),
+            'birthDate' => sprintf('%s-%s-%s', rand(01, 28), rand(01, 12), rand(1985, 2004)),
             'countryCode' => 'ru', // пока будет россия
             'city' => 'Moscow', // поиск будет пока по одному городу для тестировния.
             'gender' => $gender,
             'couple' => rand(1, 6),
-            'platform' => rand(1, 3),
+            'platform' => 1, // пока пусть будет одна базовя
             'searchMode' => 1, // поиск будет пока базовый
             'tag' => rand(1, 8),
             'searchAgeDiapazone' => [rand(18, 25), rand(25, 30)], // пока для тестирования используем диапазон от 18 до 30

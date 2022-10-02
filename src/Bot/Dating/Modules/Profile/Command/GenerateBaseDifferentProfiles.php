@@ -16,7 +16,7 @@ class GenerateBaseDifferentProfiles extends Command
 {
     use LockableTrait;
 
-    private const BASE_COUNT_PROFILES = 200;
+    private const BASE_COUNT_PROFILES = 1000;
 
     public function __construct(
         private FakeProfile $fakeProfile,
@@ -56,13 +56,14 @@ class GenerateBaseDifferentProfiles extends Command
             }
 
             $dto = (new CreateProfileDto())->fillFromArray($fakeProfile);
-
             $profile = $this->profileService->make($dto, true);
 
-            print_r($profile);
+            $output->write(sprintf('Profile with id: %s was created', $profile->getId()), true);
 
             ++$count;
         }
+
+        $output->write(sprintf('%s - profile was created', $count), true);
 
         $this->release();
 
