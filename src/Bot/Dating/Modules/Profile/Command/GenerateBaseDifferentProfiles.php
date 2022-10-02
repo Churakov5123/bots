@@ -56,6 +56,7 @@ class GenerateBaseDifferentProfiles extends Command
             }
 
             $dto = (new CreateProfileDto())->fillFromArray($fakeProfile);
+
             $profile = $this->profileService->make($dto, true);
 
             print_r($profile);
