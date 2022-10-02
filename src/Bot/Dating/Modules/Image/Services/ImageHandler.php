@@ -23,6 +23,7 @@ class ImageHandler
     {
         // validation image тут будет какоего ограничение на максимальный размер! подумать- если ок то пускаем далее
         $newImage = $this->makeImage($dto, $profile);
+
         $profile->addImage($newImage);
         //  логика по обрезке и декодированию и сохранению в стору исходя из пути
         $this->uploadImage($base64Content, $newImage);

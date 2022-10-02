@@ -21,7 +21,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Table(indexes={
- *      @ORM\Index(columns={"login"}),
  *      @ORM\Index(columns={"is_active"}),
  *      @ORM\Index(columns={"is_fake"}),
  *      @ORM\Index(columns={"city"}),
@@ -31,8 +30,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  *      @ORM\Index(columns={"age"}),
  *      @ORM\Index(columns={"tag"}),
  *      @ORM\Index(columns={"search_mode"}),
- *      @ORM\Index(columns={"last_activity"}),
- *      @ORM\Index(columns={"created_at"}),
  * })
  *
  * @ORM\Entity(repositoryClass="App\Bot\Dating\Modules\Profile\Repository\ProfileRepository")
@@ -174,7 +171,7 @@ class Profile
     /**
      * @var Image[]|ArrayCollection
      *
-     * @ORM\OneToMany(targetEntity="Image", mappedBy="profile",cascade={"persist", "remove"})
+     * @ORM\OneToMany(targetEntity="Image", mappedBy="profile", cascade={"persist", "remove"})
      * @Serializer\Expose
      * @Serializer\Accessor(setter="setImages")
      * @Serializer\SerializedName("images")
