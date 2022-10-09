@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Bot\Dating\Data\Entity;
 
+use App\Bot\Dating\Modules\AffiliateProgram\Services\AffiliateProgramService;
 use App\Bot\Dating\Modules\Horoscope\Enum\AstrologyHoroscope;
 use App\Bot\Dating\Modules\Horoscope\Enum\ChineseHoroscope;
 use App\Bot\Dating\Modules\Profile\Enum\Couple;
@@ -17,6 +18,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
 use Ramsey\Uuid\Doctrine\UuidGenerator;
+use Ramsey\Uuid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -201,6 +203,20 @@ class Profile
     protected string $lang;
 
     /**
+     * @ORM\Column(type="string", length=40)
+     *
+     * @Serializer\Expose
+     */
+    protected ?string $affiliateCode = null;
+
+    /**
+     * @ORM\Column(type="boolean")
+     *
+     * @Serializer\Expose
+     */
+    protected bool $subscription = false;
+
+    /**
      * @ORM\Column(name="is_active", type="boolean")
      *
      * @Serializer\Expose
@@ -261,6 +277,7 @@ class Profile
         $this->description = $description;
         $this->images = new ArrayCollection();
         $this->hobby = $hobby;
+        $this->affiliateCode = Uuid::uuid4()->toString();
 
         $this->locale = 'ru';
         $this->lang = 'ru';
@@ -500,6 +517,26 @@ class Profile
     public function setFake(bool $fake): void
     {
         $this->fake = $fake;
+    }
+
+    public function isSubscription(): bool
+    {
+        return $this->subscription;
+    }
+
+    public function getAffiliateCode(): string
+    {
+        return $this->affiliateCode;
+    }
+
+    public function getAffiliateLink(): string
+    {
+        return AffiliateProgramService::TELEGRAM_BOT_URL.$this->affiliateCode;
+    }
+
+    public function setSubscription(bool $subscription): void
+    {
+        $this->subscription = $subscription;
     }
 
     public function getLastActivity(): ?\DateTimeImmutable

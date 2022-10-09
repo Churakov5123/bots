@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Bot\Dating\Api\V1\Controller\Profile;
 
 use App\Bot\Dating\Data\Entity\Profile;
+use App\Bot\Dating\Modules\AffiliateProgram\Services\AffiliateProgramService;
 use App\Bot\Dating\Modules\Profile\Dto\CreateProfileDto;
 use App\Bot\Dating\Modules\Profile\Dto\ProfileDto;
 use App\Bot\Dating\Modules\Profile\Requests\CreateProfileRequest;
@@ -23,16 +24,21 @@ class ProfileController extends AbstractController
 {
     public function __construct(
         private SerializerInterface $serializer,
-        private ProfileService $profileService
+        private ProfileService $profileService,
+        private AffiliateProgramService $affiliateProgramService
     ) {
     }
 
     /**
-     * @Route("/create", methods={"POST"})
+     * @Route("/create/{affiliateCode}", methods={"POST"})
      */
-    public function create(CreateProfileRequest $request): JsonResponse
+    public function create(CreateProfileRequest $request, ?string $affiliateCode = null): JsonResponse
     {
         $dto = (new CreateProfileDto())->fillFromBaseRequest($request);
+
+        if (null !== $affiliateCode) {
+            $this->affiliateProgramService->activateSubscriptionForAttracting($affiliateCode);
+        }
 
         try {
             $result = $this->profileService->make($dto);
