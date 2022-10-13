@@ -28,8 +28,7 @@ class ProfileRepository extends ServiceEntityRepository
                 ]);
         }
 
-//        Пока без платформы. Неимеет смысл сразу писать на все платформы пока не работет нормально хотябы одна
-
+//        Пока без платформы.
 //        if (isset($param['platform'])) {
 //            $query
 //                ->where('t.platform = :platform')
@@ -37,14 +36,14 @@ class ProfileRepository extends ServiceEntityRepository
 //                    'platform' => $param['platform']
 //                ]);
 //        }
-//     Режимы поиска тоже поскольку - в идеале нужно прорабатывать каждый режим поиск отдельно!!! в одтельным клссом
-//        if (isset($param['searchMode'])) {
-//            $query
-//                ->where('t.searchMode = :searchMode')
-//                ->setParameters([
-//                    'searchMode' => $param['searchMode']
-//                ]);
-//        }
+
+        if (isset($param['searchMode'])) {
+            $query
+                ->where('t.searchMode = :searchMode')
+                ->setParameters([
+                    'searchMode' => $param['searchMode'],
+                ]);
+        }
 
         if (isset($param['tag'])) {
             $query
