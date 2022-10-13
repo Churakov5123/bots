@@ -29,18 +29,6 @@ abstract class BaseDto
         return $dto;
     }
 
-    public function fillFromObject(object $object): self
-    {
-        $class = $this->className();
-        $dto = new $class();
-
-        foreach (get_class_vars($class) as $k => $v) {
-            $dto->$k = $object[$k] ?? ($v ?? null);
-        }
-
-        return $dto;
-    }
-
     public function toArray(): array
     {
         $attributes = [];
