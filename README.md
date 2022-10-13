@@ -1,9 +1,7 @@
 <p>It would be cool when a person, flipping through the tape, could choose not only by photo ...</p>
 <p>Idea suggestions are welcome..</p>
-<p>Twitter
-<a>https://twitter.com/Yan_yanii_yanii?t=FkxqWphO9pg7_ObrXKxHvw&s=35</a></p>
-<p>Telegram
-<a>https://t.me/bot_dates</a></p>
+<p>Twitter</p> <a>https://twitter.com/Yan_yanii_yanii?t=FkxqWphO9pg7_ObrXKxHvw&s=35</a>
+<p>Telegram</p> <a>https://t.me/bot_dates</a>
 
 
 <h3>Launch of the project:</h3>
