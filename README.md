@@ -1,3 +1,11 @@
+<p>It would be cool when a person, flipping through the tape, could choose not only by photo ...</p>
+<p>Idea suggestions are welcome..</p>
+<p>Twitter
+<a>https://twitter.com/Yan_yanii_yanii?t=FkxqWphO9pg7_ObrXKxHvw&s=35</a></p>
+<p>Telegram
+<a>https://t.me/bot_dates</a></p>
+
+
 <h3>Launch of the project:</h3>
 <p>run at the root of the project run cp .env.local .env , in docker directory cp ./docker .env.local ./docker .env</p>
 <p>docker-compose up -d --build (later it will be possible to use docker-compose start/stop )</p>
