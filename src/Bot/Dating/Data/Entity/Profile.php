@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Bot\Dating\Data\Entity;
 
+use App\Bot\Dating\Components\Entity\ArrayExpressible;
 use App\Bot\Dating\Modules\AffiliateProgram\Services\AffiliateProgramService;
 use App\Bot\Dating\Modules\Horoscope\Enum\AstrologyHoroscope;
 use App\Bot\Dating\Modules\Horoscope\Enum\ChineseHoroscope;
@@ -38,7 +39,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @Serializer\ExclusionPolicy("all")
  */
-class Profile
+class Profile extends ArrayExpressible
 {
     /**
      * @var \Ramsey\Uuid\UuidInterface
