@@ -22,7 +22,7 @@ class ProfileRepository extends ServiceEntityRepository
 
         if (isset($param['city'])) {
             $query
-                ->where('t.city = :city')
+                ->Where('t.city = :city')
                 ->setParameters([
                     'city' => $param['city'],
                 ]);
@@ -30,7 +30,7 @@ class ProfileRepository extends ServiceEntityRepository
 
         if (isset($param['platform'])) {  // пока одна платформа
             $query
-                ->where('t.platform = :platform')
+                ->andWhere('t.platform = :platform')
                 ->setParameters([
                     'platform' => $param['platform'],
                 ]);
@@ -38,7 +38,7 @@ class ProfileRepository extends ServiceEntityRepository
 
         if (isset($param['searchMode'])) {
             $query
-                ->where('t.searchMode = :searchMode')
+                ->andWhere('t.searchMode = :searchMode')
                 ->setParameters([
                     'searchMode' => $param['searchMode'],
                 ]);
@@ -46,7 +46,7 @@ class ProfileRepository extends ServiceEntityRepository
 
         if (isset($param['tag'])) {
             $query
-                ->where('t.tag = :tag')
+                ->Where('t.tag = :tag')
                 ->setParameters([
                     'tag' => $param['tag'],
                 ]);
@@ -54,7 +54,7 @@ class ProfileRepository extends ServiceEntityRepository
 
         if (isset($param['couple'])) {
             $query
-                ->where('t.gender = :gender')
+                ->Where('t.gender = :gender')
                 ->setParameters([
                     'gender' => $param['couple'],
                 ]);

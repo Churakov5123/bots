@@ -341,7 +341,7 @@ class FakeProfile
             'gender' => $gender,
             'couple' => rand(1, 6),
             'platform' => 1, // пока пусть будет одна базовя
-            'searchMode' => 1, // поиск будет пока базовый
+            'searchMode' => 2, // поиск будет пока базовый
             'tag' => rand(1, 8),
             'searchAgeDiapazone' => [rand(18, 25), rand(25, 30)], // пока для тестирования используем диапазон от 18 до 30
 //            'images' => [

@@ -31,6 +31,8 @@ class FeedService
 
     private function getDataForFeed(array $params, int $limit, FeedTemplate $template): array
     {
+        // В зависимости от того какой шаблон - такой заранее будет запрос в базу данных - с филтрацией на пол и интерс приватоного, и все остальное для базового!
+        // режим не будет учитываться в заапросе - только тип анкеты если это привтный (  поиск ) !
         $data = $this->profileRepository->getListByParams($params, $limit);
 
         return $template->prepareData($data);
