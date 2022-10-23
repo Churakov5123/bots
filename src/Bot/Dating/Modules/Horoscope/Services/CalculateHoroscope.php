@@ -14,40 +14,40 @@ class CalculateHoroscope
 
     private const ASTROLOGY_CALENDAR = [
         ['name' => 'aries',
-            'key' => 1, 'unicode' => '♈', 'start' => '03-21', 'end' => '04-20', 'description' => null,
+            'key' => 1, 'unicode' => '♈', 'start' => '03-21', 'end' => '04-20', 'description' => 'Любят говорить правду в лицо, очень упрямы',
         ],
         ['name' => 'taurus',
-            'key' => 2, 'unicode' => '♉', 'start' => '04-21', 'end' => '05-21', 'description' => null,
+            'key' => 2, 'unicode' => '♉', 'start' => '04-21', 'end' => '05-21', 'description' => 'Пока спокоен, демонстрирует мягкость, терпение.',
         ],
         ['name' => 'gemini',
-            'key' => 3, 'unicode' => '♊', 'start' => '05-22', 'end' => '06-21', 'description' => null,
+            'key' => 3, 'unicode' => '♊', 'start' => '05-22', 'end' => '06-21', 'description' => 'Многие сочтут их лицемерами, но Близнецы лишь путают сами себя, потому что не могут выбирать четкой позиции в жизни.',
         ],
         ['name' => 'cancer',
-            'key' => 4, 'unicode' => '♋', 'start' => '06-22', 'end' => '07-22', 'description' => null,
+            'key' => 4, 'unicode' => '♋', 'start' => '06-22', 'end' => '07-22', 'description' => 'Среди главных страхов представителей знака — страх бедности. Раки очень домашние, любят и умеют заботиться о близких.',
         ],
         ['name' => 'leo',
-            'key' => 5, 'unicode' => '♌', 'start' => '07-23', 'end' => '08-23', 'description' => null,
+            'key' => 5, 'unicode' => '♌', 'start' => '07-23', 'end' => '08-23', 'description' => 'Львы отважны, щедры, благородны и могут пожертвовать собой ради других.',
         ],
         ['name' => 'virgo',
-            'key' => 6, 'unicode' => '♍', 'start' => '08-24', 'end' => '09-23', 'description' => null,
+            'key' => 6, 'unicode' => '♍', 'start' => '08-24', 'end' => '09-23', 'description' => 'Поддерживают порядок в деньгах, делах и доме, практичны и домовиты.',
         ],
         ['name' => 'libra',
-            'key' => 7, 'unicode' => '♎', 'start' => '09-24', 'end' => '10-23', 'description' => null,
+            'key' => 7, 'unicode' => '♎', 'start' => '09-24', 'end' => '10-23', 'description' => 'Весы любят, когда их хвалят, но не выносят критику. Редко проявляют оригинальность, стараются не брать на себя лишней ответственности.',
         ],
         ['name' => 'scorpio',
-            'key' => 8, 'unicode' => '♏', 'start' => '10-24', 'end' => '11-22', 'description' => null,
+            'key' => 8, 'unicode' => '♏', 'start' => '10-24', 'end' => '11-22', 'description' => 'Скорпионы любят жить, как говорится, на полную катушку, крайне азартны, склонны к зависимостям, категоричны. Людям чаще не доверяют и создают трагедию на пустом месте.',
         ],
         ['name' => 'sagittarius',
-            'key' => 9, 'unicode' => ' ♐', 'start' => '11-23', 'end' => '12-21', 'description' => null,
+            'key' => 9, 'unicode' => ' ♐', 'start' => '11-23', 'end' => '12-21', 'description' => 'У представителей этого знака хорошо развита сила воли, они решительны и слегка воинственны, любят всех поучать.',
         ],
         ['name' => 'capricorn',
-            'key' => 10, 'unicode' => '♑', 'start' => '12-22', 'end' => '01-20', 'description' => null,
+            'key' => 10, 'unicode' => '♑', 'start' => '12-22', 'end' => '01-20', 'description' => 'Рисковать Козерог не любит, может стать закоренелым пессимистом и закрыться из-за неуверенности в себе.',
         ],
         ['name' => 'aquarius',
-            'key' => 11, 'unicode' => '♒', 'start' => '01-21', 'end' => '02-19', 'description' => null,
+            'key' => 11, 'unicode' => '♒', 'start' => '01-21', 'end' => '02-19', 'description' => 'Налет романтики мешает Водолею трезво смотреть на мир. Зато не мешает быть ярким, неординарным.',
         ],
         ['name' => 'pisces',
-            'key' => 12, 'unicode' => '♓', 'start' => '02-20', 'end' => '03-20', 'description' => null,
+            'key' => 12, 'unicode' => '♓', 'start' => '02-20', 'end' => '03-20', 'description' => 'В быту неприхотливы, уравновешены, умеют скрывать чувства и часто манипулируют другими людьми. Тщеславие и меркантильность не присущи водному знаку, они умеют работать, но не рвутся к славе.',
         ],
     ];
 
@@ -96,7 +96,9 @@ class CalculateHoroscope
                     $zodiac['description'],
                 );
             }
+        }
 
+        foreach (array_slice(self::ASTROLOGY_CALENDAR, 9, 2) as $zodiac) {
             if (
                 $date >= strtotime(($year).'-'.$zodiac['start']) &&
                 $date <= strtotime(($year + 1).'-'.$zodiac['end'].' '.self::END_DAY)
@@ -111,21 +113,21 @@ class CalculateHoroscope
                     $zodiac['description'],
                 );
             }
-        }
 
-        if (
-            $date >= strtotime(($year - 1).'-'.$zodiac['start']) &&
-            $date <= strtotime(($year).'-'.$zodiac['end'].' '.self::END_DAY)
-        ) {
-            return new HoroscopeValueObject(
-                $zodiac['name'],
-                $zodiac['key'],
-                $zodiac['unicode'],
-                $zodiac['start'],
-                $zodiac['end'],
-                Calendar::from(Calendar::Astrology->value),
-                $zodiac['description'],
-            );
+            if (
+                $date >= strtotime(($year - 1).'-'.$zodiac['start']) &&
+                $date <= strtotime(($year).'-'.$zodiac['end'].' '.self::END_DAY)
+            ) {
+                return new HoroscopeValueObject(
+                    $zodiac['name'],
+                    $zodiac['key'],
+                    $zodiac['unicode'],
+                    $zodiac['start'],
+                    $zodiac['end'],
+                    Calendar::from(Calendar::Astrology->value),
+                    $zodiac['description'],
+                );
+            }
         }
 
         throw new Exception('AstrologyHoroscope is not found');

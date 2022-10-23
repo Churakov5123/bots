@@ -6,7 +6,7 @@ namespace App\Bot\Dating\Modules\Horoscope\Object;
 
 use App\Bot\Dating\Modules\Horoscope\Enum\Calendar;
 
-class HoroscopeValueObject
+class HoroscopeValueObject implements Horoscope
 {
     private ?string $name;
     private ?int $key;
@@ -92,5 +92,27 @@ class HoroscopeValueObject
     public function isAstrologyCalendar(): bool
     {
         return $this->calendar->value === Calendar::from(1)->value;
+    }
+
+    public function getCalendar(): ?Calendar
+    {
+        return $this->calendar;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function getData(): array
+    {
+        return [
+            'name' => $this->getName(),
+            'key' => $this->getKey(),
+            'unicode' => $this->getUnicode(),
+            'start' => $this->getStart(),
+            'end' => $this->getEnd(),
+            'description' => $this->getDescription(),
+        ];
     }
 }

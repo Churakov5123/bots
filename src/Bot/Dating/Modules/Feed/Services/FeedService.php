@@ -12,15 +12,15 @@ use App\Bot\Dating\Modules\Profile\Repository\ProfileRepository;
 
 class FeedService
 {
-    private const ADVERTISING_PLACE = 5;
-
     public function __construct(
         private ProfileRepository $profileRepository,
         private TemplateFactory $templateFactory,
     ) {
     }
 
-    // логика на создание общей ленты с кешем  счетчиком и его обновлением
+    /**
+     * @throws \Exception
+     */
     public function getFeed(array $params, Profile $profile, int $limit): array
     {
         $searchMode = SearchMode::from($params['searchMode']);
@@ -31,34 +31,8 @@ class FeedService
 
     private function getDataForFeed(array $params, int $limit, FeedTemplate $template): array
     {
-//        dump($params);
-//         $filtredParams =   $this->filteredParamsByProfile($params);
-        // сырой запрос на получение профилей в зависимости от параметров и установленного лимита выборки
         $data = $this->profileRepository->getListByParams($params, $limit);
-        // dd($data);
-        return $this->prepareData($data, $template);
-    }
 
-    private function prepareData(array $profiles, FeedTemplate $template): array
-    {
-        $count = 0;
-        $advertCount = 0;
-        $result = [];
-
-        foreach ($profiles as $profile) {
-            ++$count;
-
-            $result[] = $profile;
-
-            if (self::ADVERTISING_PLACE === $count) {
-                $ads = $advertCount >= $template->getAdvertCount() ? $advertCount = 0 : $advertCount++;
-
-                $result[] = $template->getAdvert($ads);
-
-                $count = 0;
-            }
-        }
-
-        return $result;
+        return $template->prepareData($data);
     }
 }
