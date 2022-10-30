@@ -16,7 +16,7 @@ class ProfileRepository extends ServiceEntityRepository
     }
 
     /**
-     * Точечный приватный поиск по тегу ( совпадению пары и тега).
+     * Точечный приватный поиск по тегу (совпадению пары и тега).
      */
     public function getListForPrivateTemplate(array $param): array
     {
@@ -41,37 +41,27 @@ class ProfileRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * Базовый поиск.
+     *
+     * @param array $param
+     *
+     * @return array
+     */
     public function getListForBaseTemplate(array $param): array
     {
-        $query = $this
-            ->createQueryBuilder('t');
-
-        // пока будем искать только по россии
-        if (isset($param['city'])) {
-            $query
-                ->Where('t.city = :city')
-                ->setParameters([
-                    'city' => $param['city'],
-                ]);
-        }
-
-        if (isset($param['couple'])) {
-            $query
-                ->Where('t.gender = :gender')
-                ->setParameters([
-                    'gender' => $param['couple'],
-                ]);
-        }
-
-        if (isset($param['searchAgeDiapazone'])) {
-            $query
-                ->andWhere('t.age >= :start_age')
-                ->andWhere('t.age <= :end_age')
-                ->setParameter('start_age', $param['searchAgeDiapazone'][0])
-                ->setParameter('end_age', $param['searchAgeDiapazone'][1]);
-        }
-
-        return $query
+        return $this
+            ->createQueryBuilder('t')
+            ->where('t.city = :city')
+            ->andWhere('t.gender = :gender')
+            ->andWhere('t.age >= :start_age')
+            ->andWhere('t.age <= :end_age')
+            ->setParameters([
+                'city' => $param['city'],
+                'gender' => $param['couple'],
+                'start_age' => $param['searchAgeDiapazone'][0],
+                'end_age' => $param['searchAgeDiapazone'][1],
+            ])
             ->orderBy('t.lastActivity', 'DESC')
             ->getQuery()
             ->getResult();
