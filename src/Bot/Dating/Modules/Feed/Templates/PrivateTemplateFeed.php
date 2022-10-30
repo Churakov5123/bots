@@ -18,4 +18,9 @@ class PrivateTemplateFeed extends AbstractTemplateFeed
     {
         return $this->transformProfile($profile, $profileOwner)->getProfileForPrivateTemplate();
     }
+
+    public function getName(): string
+    {
+        return self::PRIVATE_TEMPLATE;
+    }
 }

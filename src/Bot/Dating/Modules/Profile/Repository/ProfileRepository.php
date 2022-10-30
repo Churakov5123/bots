@@ -15,7 +15,69 @@ class ProfileRepository extends ServiceEntityRepository
         parent::__construct($registry, Profile::class);
     }
 
-    public function getListByParams(array $param, int $limit): array
+    /**
+     * Точечный приватный поиск по тегу ( совпадению пары и тега).
+     */
+    public function getListForPrivateTemplate(array $param): array
+    {
+        return $this
+            ->createQueryBuilder('t')
+            ->where('t.city = :city')
+            ->andWhere('t.tag = :tag')
+            ->andWhere('t.couple = :couple')
+            ->andWhere('t.gender = :gender')
+            ->andWhere('t.age >= :start_age')
+            ->andWhere('t.age <= :end_age')
+            ->setParameters([
+                'city' => $param['city'],
+                'tag' => $param['tag'],
+                'couple' => $param['gender'],
+                'gender' => $param['couple'],
+                'start_age' => $param['searchAgeDiapazone'][0],
+                'end_age' => $param['searchAgeDiapazone'][1],
+            ])
+            ->orderBy('t.lastActivity', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function getListForBaseTemplate(array $param): array
+    {
+        $query = $this
+            ->createQueryBuilder('t');
+
+        // пока будем искать только по россии
+        if (isset($param['city'])) {
+            $query
+                ->Where('t.city = :city')
+                ->setParameters([
+                    'city' => $param['city'],
+                ]);
+        }
+
+        if (isset($param['couple'])) {
+            $query
+                ->Where('t.gender = :gender')
+                ->setParameters([
+                    'gender' => $param['couple'],
+                ]);
+        }
+
+        if (isset($param['searchAgeDiapazone'])) {
+            $query
+                ->andWhere('t.age >= :start_age')
+                ->andWhere('t.age <= :end_age')
+                ->setParameter('start_age', $param['searchAgeDiapazone'][0])
+                ->setParameter('end_age', $param['searchAgeDiapazone'][1]);
+        }
+
+        return $query
+            ->orderBy('t.lastActivity', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function getListByParams(array $param): array
     {
         $query = $this
             ->createQueryBuilder('t');
@@ -70,7 +132,6 @@ class ProfileRepository extends ServiceEntityRepository
 
         return $query
             ->orderBy('t.lastActivity', 'DESC')
-            ->setMaxResults($limit)
             ->getQuery()
             ->getResult();
     }

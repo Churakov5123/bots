@@ -13,28 +13,41 @@ use App\Bot\Dating\Modules\Profile\Repository\ProfileRepository;
 class FeedService
 {
     public function __construct(
-        private ProfileRepository $profileRepository,
         private TemplateFactory $templateFactory,
+        private ProfileRepository $profileRepository
     ) {
     }
 
     /**
      * @throws \Exception
      */
-    public function getFeed(array $params, Profile $profile, int $limit): array
+    public function getFeed(array $params, Profile $profile): array
     {
         $searchMode = SearchMode::from($params['searchMode']);
         $template = $this->templateFactory->getTemplate($searchMode, $profile);
 
-        return $this->getDataForFeed($params, $limit, $template);
+        return $this->getDataForFeed($params, $template);
     }
 
-    private function getDataForFeed(array $params, int $limit, FeedTemplate $template): array
+    private function getDataForFeed(array $params, FeedTemplate $template): array
     {
         // В зависимости от того какой шаблон - такой заранее будет запрос в базу данных - с филтрацией на пол и интерс приватоного, и все остальное для базового!
         // режим не будет учитываться в заапросе - только тип анкеты если это привтный (  поиск ) !
-        $data = $this->profileRepository->getListByParams($params, $limit);
+        $data = $this->getDataForTemplate($template, $params);
 
         return $template->prepareData($data);
+    }
+
+    private function getDataForTemplate(FeedTemplate $template, array $params): array
+    {
+        if ($template->isBaseTemplate()) {
+            return $this->profileRepository->getListForBaseTemplate($params);
+        }
+
+        if ($template->isPrivateTemplate()) {
+            return $this->profileRepository->getListForPrivateTemplate($params);
+        }
+
+        throw new \Exception('Template feed is not supported');
     }
 }

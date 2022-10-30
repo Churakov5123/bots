@@ -36,7 +36,7 @@ class FeedController extends AbstractController
                 throw new \Exception('Сперва активируйте Ваш профиль в настройках, после вам будет доступен режим поиска.');
             }
 
-            $result = $this->feedService->getFeed($profile->toArray(), $profile, 100);
+            $result = $this->feedService->getFeed($profile->toArray(), $profile);
             dd($result);
 
             return JsonResponse::fromJsonString(
