@@ -6,6 +6,7 @@ namespace App\Bot\Dating\Api\V1\Controller\Profile;
 
 use App\Bot\Dating\Data\Entity\Profile;
 use App\Bot\Dating\Modules\AffiliateProgram\Services\AffiliateProgramService;
+use App\Bot\Dating\Modules\Profile\Decorator\ProfileDecorator;
 use App\Bot\Dating\Modules\Profile\Dto\CreateProfileDto;
 use App\Bot\Dating\Modules\Profile\Dto\ProfileDto;
 use App\Bot\Dating\Modules\Profile\Requests\CreateProfileRequest;
@@ -25,7 +26,8 @@ class ProfileController extends AbstractController
     public function __construct(
         private SerializerInterface $serializer,
         private ProfileService $profileService,
-        private AffiliateProgramService $affiliateProgramService
+        private AffiliateProgramService $affiliateProgramService,
+        private ProfileDecorator $profileDecorator
     ) {
     }
 
@@ -42,9 +44,10 @@ class ProfileController extends AbstractController
 
         try {
             $result = $this->profileService->make($dto);
+            $profile = $this->profileDecorator->presentProfile($result);
 
             return JsonResponse::fromJsonString(
-                $this->serializer->serialize($result, 'json'),
+                $this->serializer->serialize($profile, 'json'),
             );
         } catch (\Exception $e) {
             return JsonResponse::fromJsonString(
@@ -65,9 +68,10 @@ class ProfileController extends AbstractController
             }
 
             $result = $this->profileService->read($id);
+            $profile = $this->profileDecorator->presentProfile($result);
 
             return JsonResponse::fromJsonString(
-                $this->serializer->serialize($result, 'json'),
+                $this->serializer->serialize($profile, 'json'),
             );
         } catch (\Exception $e) {
             return JsonResponse::fromJsonString(
@@ -92,9 +96,10 @@ class ProfileController extends AbstractController
             $dto = (new ProfileDto())->fillFromBaseRequest($request);
 
             $result = $this->profileService->update($profile, $dto);
+            $profile = $this->profileDecorator->presentProfile($result);
 
             return JsonResponse::fromJsonString(
-                $this->serializer->serialize($result, 'json'),
+                $this->serializer->serialize($profile, 'json'),
             );
         } catch (\Exception $e) {
             return JsonResponse::fromJsonString(

@@ -43,10 +43,6 @@ class ProfileRepository extends ServiceEntityRepository
 
     /**
      * Базовый поиск.
-     *
-     * @param array $param
-     *
-     * @return array
      */
     public function getListForBaseTemplate(array $param): array
     {
