@@ -68,10 +68,11 @@ class ProfileController extends AbstractController
             }
 
             $result = $this->profileService->read($id);
-            $profile = $this->profileDecorator->presentProfile($result);
+            /** @var Profile $profile */
+            $profile = $this->profileService->addLastActivity($result);
 
             return JsonResponse::fromJsonString(
-                $this->serializer->serialize($profile, 'json'),
+                $this->serializer->serialize($this->profileDecorator->presentProfile($profile), 'json'),
             );
         } catch (\Exception $e) {
             return JsonResponse::fromJsonString(

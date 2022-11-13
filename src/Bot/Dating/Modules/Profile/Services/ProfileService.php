@@ -94,6 +94,7 @@ class ProfileService
         $profile->setSearchAgeDiapazone($dto->getSearchAgeDiapazone());
         $profile->setSearchMode($dto->getSearchMode());
         $profile->setTag($dto->getTag());
+        $profile->setLastActivity(new \DateTimeImmutable());
 
         $this->profileRepository->save($profile);
 
@@ -136,6 +137,7 @@ class ProfileService
         }
 
         $profile->setActive(false);
+        $profile->setLastActivity(new \DateTimeImmutable());
 
         $this->profileRepository->save($profile);
     }
@@ -152,6 +154,7 @@ class ProfileService
         }
 
         $profile->setActive(true);
+        $profile->setLastActivity(new \DateTimeImmutable());
 
         $this->profileRepository->save($profile);
     }
@@ -171,5 +174,14 @@ class ProfileService
         } catch (\Exception $e) {
             throw $e;
         }
+    }
+
+    public function addLastActivity(Profile $profile): Profile
+    {
+        $profile->setLastActivity(new \DateTimeImmutable());
+
+        $this->profileRepository->save($profile);
+
+        return $profile;
     }
 }

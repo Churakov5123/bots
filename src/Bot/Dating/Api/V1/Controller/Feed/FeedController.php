@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Bot\Dating\Api\V1\Controller\Feed;
 
-use App\Bot\Dating\Modules\Feed\Dto\ReadFeedDto;
+use App\Bot\Dating\Data\Entity\Profile;
 use App\Bot\Dating\Modules\Feed\Requests\ReadFeedRequest;
 use App\Bot\Dating\Modules\Feed\Services\FeedService;
 use App\Bot\Dating\Modules\Profile\Services\ProfileService;
@@ -12,6 +12,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 
 /**
  * @Route("/feed")
@@ -31,16 +33,17 @@ class FeedController extends AbstractController
     public function list(?string $profileId = null): JsonResponse
     {
         try {
-            $profile = $this->profileService->read($profileId);
+            $result = $this->profileService->read($profileId);
 
-            if (!$profile->isActive()) {
+            if (!$result->isActive()) {
                 throw new \Exception('Сперва активируйте Ваш профиль в настройках, после вам будет доступен режим поиска.');
             }
-
-            $result = $this->feedService->getFeed($profile->toArray(), $profile);
+            /** @var Profile $profile */
+            $profile = $this->profileService->addLastActivity($result);
+            $feed = $this->feedService->getFeed($profile);
 
             return JsonResponse::fromJsonString(
-                $this->serializer->serialize($result, 'json'),
+                $this->serializer->serialize($feed, 'json'),
             );
         } catch (\Exception $e) {
             return JsonResponse::fromJsonString(
@@ -51,34 +54,50 @@ class FeedController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", methods={"POST"})
+     * @Route("/{profileId}", methods={"POST"})
      */
-    public function read(ReadFeedRequest $request, ?string $profileId = null): JsonResponse
+    public function read(ReadFeedRequest $request, CacheInterface $fileCache, ?string $profileId = null): JsonResponse
     {
         try {
-            $profile = $this->profileService->read($profileId);
+            $result = $this->profileService->read($profileId);
 
-            if (!$profile->isActive()) {
+            if (!$result->isActive()) {
                 throw new \Exception('Сперва активируйте Ваш профиль в настройках, после вам будет доступен режим поиска.');
             }
+            /** @var Profile $profile */
+            $profile = $this->profileService->addLastActivity($result);
 
-            if (null === get_cache('count')) {
-                set_cache('count', 0, '1d');
+            $count = $fileCache->get(sprintf('%s_%s', 'count', $profileId), function (ItemInterface $item): int {
+                $item->expiresAfter(3600);
+
+                return 0;
+            });
+
+            $feeds = $fileCache->get(sprintf('%s_%s', 'feeds', $profileId), function (ItemInterface $item) use ($profile): array {
+                $item->expiresAfter(3600);
+
+                return $this->feedService->getFeed($profile);
+            });
+
+            if (count($feeds) < $count + 1) {
+                $fileCache->delete(sprintf('%s_%s', 'count', $profileId));
+                $fileCache->delete(sprintf('%s_%s', 'feeds', $profileId));
+
+                return JsonResponse::fromJsonString(
+                    $this->serializer->serialize(['msg' => 'Лимит поиска исчерпан, начните с начала, возможно появится кто-то новенький )'],
+                        'json'),
+                );
             }
-            // поставить в кэш!
-            if (null === get_cache('feeds')) {
-                set_cache('feeds', $this->feedService->getFeed($profile->toArray(), $profile), '1d');
-            }
 
-            $feed = get_cache('feeds')[get_cache('count')];
+            $feed = $feeds[$count];
+            $next = ++$count;
 
-            /** @var ReadFeedDto $dto */
-            $dto = (new ReadFeedDto())->fillFromBaseRequest($request);
-            if (null !== $dto->getProfileId() && null !== $dto->getResolution()) {
-                // тут будет подключена система логирования решения по каждому  подльзователю из фида
-            }
+            $fileCache->delete(sprintf('%s_%s', 'count', $profileId));
+            $fileCache->get(sprintf('%s_%s', 'count', $profileId), function (ItemInterface $item) use ($next): int {
+                $item->expiresAfter(3600);
 
-            set_cache('count', +1, '1d');
+                return $next;
+            });
 
             return JsonResponse::fromJsonString(
                 $this->serializer->serialize($feed, 'json'),

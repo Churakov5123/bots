@@ -21,8 +21,9 @@ class FeedService
     /**
      * @throws \Exception
      */
-    public function getFeed(array $params, Profile $profile): array
+    public function getFeed(Profile $profile): array
     {
+        $params = $profile->toArray();
         $searchMode = SearchMode::from($params['searchMode']);
         $template = $this->templateFactory->getTemplate($searchMode, $profile);
 

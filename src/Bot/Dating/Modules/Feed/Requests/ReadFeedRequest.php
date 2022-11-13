@@ -11,7 +11,6 @@ class ReadFeedRequest extends BaseRequest
 {
     /**
      * @Assert\Type("string")
-     * @Assert\Uiid
      */
     protected ?string $profileId = null;
 
