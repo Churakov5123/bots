@@ -30,6 +30,14 @@ class FeedService
         return $this->getDataForFeed($params, $template);
     }
 
+    /**
+     * @throws \Exception
+     */
+    public function getSingleFeed(Profile $profile): array
+    {
+        return [];
+    }
+
     private function getDataForFeed(array $params, FeedTemplate $template): array
     {
         // В зависимости от того какой шаблон - такой заранее будет запрос в базу данных - с филтрацией на пол и интерс приватоного, и все остальное для базового!

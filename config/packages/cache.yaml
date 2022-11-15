@@ -8,8 +8,8 @@ framework:
         # Other options include:
 
         # Redis
-        #app: cache.adapter.redis
-        #default_redis_provider: redis://localhost
+#        app: cache.adapter.redis
+#        default_redis_provider: '%env(resolve:REDIS_URL)%'
 
         # APCu (not recommended with heavy random-write workloads as memory fragmentation can cause perf issues)
         #app: cache.adapter.apcu
@@ -18,3 +18,15 @@ framework:
         pools:
             file_cache:
                 adapter: cache.adapter.filesystem
+                tags: true
+            redis_cache:
+                adapter: cache.adapter.redis
+                provider: app.my_custom_redis_provider
+                tags: true
+services:
+    app.my_custom_redis_provider:
+        class: \Redis
+        factory: ['Symfony\Component\Cache\Adapter\RedisAdapter', 'createConnection']
+        arguments:
+            - '%env(resolve:REDIS_URL)%'
+            - { retry_interval: 2, timeout: 10 }

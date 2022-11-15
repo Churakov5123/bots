@@ -9,6 +9,8 @@ RUN apt-get install -y --no-install-recommends \
              libpng-dev \
          && docker-php-ext-configure gd  && docker-php-ext-install -j$(nproc) gd
 
+RUN pecl install redis && docker-php-ext-enable redis
+
 WORKDIR /var/www
 ADD ./php.ini /usr/local/etc/php/php.ini
 

@@ -56,7 +56,7 @@ class FeedController extends AbstractController
     /**
      * @Route("/{profileId}", methods={"POST"})
      */
-    public function read(ReadFeedRequest $request, CacheInterface $fileCache, ?string $profileId = null): JsonResponse
+    public function read(ReadFeedRequest $request, CacheInterface $redisCache, ?string $profileId = null): JsonResponse
     {
         try {
             $result = $this->profileService->read($profileId);
@@ -67,21 +67,21 @@ class FeedController extends AbstractController
             /** @var Profile $profile */
             $profile = $this->profileService->addLastActivity($result);
 
-            $count = $fileCache->get(sprintf('%s_%s', 'count', $profileId), function (ItemInterface $item): int {
+            $count = $redisCache->get(sprintf('%s_%s', 'count', $profileId), function (ItemInterface $item): int {
                 $item->expiresAfter(3600);
 
                 return 0;
             });
 
-            $feeds = $fileCache->get(sprintf('%s_%s', 'feeds', $profileId), function (ItemInterface $item) use ($profile): array {
+            $feeds = $redisCache->get(sprintf('%s_%s', 'feeds', $profileId), function (ItemInterface $item) use ($profile): array {
                 $item->expiresAfter(3600);
 
                 return $this->feedService->getFeed($profile);
             });
 
             if (count($feeds) < $count + 1) {
-                $fileCache->delete(sprintf('%s_%s', 'count', $profileId));
-                $fileCache->delete(sprintf('%s_%s', 'feeds', $profileId));
+                $redisCache->delete(sprintf('%s_%s', 'count', $profileId));
+                $redisCache->delete(sprintf('%s_%s', 'feeds', $profileId));
 
                 return JsonResponse::fromJsonString(
                     $this->serializer->serialize(['msg' => 'Лимит поиска исчерпан, начните с начала, возможно появится кто-то новенький )'],
@@ -92,8 +92,8 @@ class FeedController extends AbstractController
             $feed = $feeds[$count];
             $next = ++$count;
 
-            $fileCache->delete(sprintf('%s_%s', 'count', $profileId));
-            $fileCache->get(sprintf('%s_%s', 'count', $profileId), function (ItemInterface $item) use ($next): int {
+            $redisCache->delete(sprintf('%s_%s', 'count', $profileId));
+            $redisCache->get(sprintf('%s_%s', 'count', $profileId), function (ItemInterface $item) use ($next): int {
                 $item->expiresAfter(3600);
 
                 return $next;
