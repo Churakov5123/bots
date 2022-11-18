@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Bot\Dating\Api\V1\Controller\Feed;
 
 use App\Bot\Dating\Data\Entity\Profile;
+use App\Bot\Dating\Modules\Coincidence\Dto\ReadFeedDto;
+use App\Bot\Dating\Modules\Feed\Exceptions\FeedLimitException;
 use App\Bot\Dating\Modules\Feed\Requests\ReadFeedRequest;
 use App\Bot\Dating\Modules\Feed\Services\FeedService;
 use App\Bot\Dating\Modules\Profile\Services\ProfileService;
@@ -13,7 +15,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Contracts\Cache\CacheInterface;
-use Symfony\Contracts\Cache\ItemInterface;
 
 /**
  * @Route("/feed")
@@ -21,9 +22,9 @@ use Symfony\Contracts\Cache\ItemInterface;
 class FeedController extends AbstractController
 {
     public function __construct(
-      private SerializerInterface $serializer,
-      private FeedService $feedService,
-      private ProfileService $profileService,
+        private SerializerInterface $serializer,
+        private FeedService $feedService,
+        private ProfileService $profileService,
     ) {
     }
 
@@ -66,41 +67,17 @@ class FeedController extends AbstractController
             }
             /** @var Profile $profile */
             $profile = $this->profileService->addLastActivity($result);
+            $dto = (new ReadFeedDto())->fillFromBaseRequest($request);
 
-            $count = $redisCache->get(sprintf('%s_%s', 'count', $profileId), function (ItemInterface $item): int {
-                $item->expiresAfter(3600);
-
-                return 0;
-            });
-
-            $feeds = $redisCache->get(sprintf('%s_%s', 'feeds', $profileId), function (ItemInterface $item) use ($profile): array {
-                $item->expiresAfter(3600);
-
-                return $this->feedService->getFeed($profile);
-            });
-
-            if (count($feeds) < $count + 1) {
-                $redisCache->delete(sprintf('%s_%s', 'count', $profileId));
-                $redisCache->delete(sprintf('%s_%s', 'feeds', $profileId));
-
-                return JsonResponse::fromJsonString(
-                    $this->serializer->serialize(['msg' => 'Лимит поиска исчерпан, начните с начала, возможно появится кто-то новенький )'],
-                        'json'),
-                );
-            }
-
-            $feed = $feeds[$count];
-            $next = ++$count;
-
-            $redisCache->delete(sprintf('%s_%s', 'count', $profileId));
-            $redisCache->get(sprintf('%s_%s', 'count', $profileId), function (ItemInterface $item) use ($next): int {
-                $item->expiresAfter(3600);
-
-                return $next;
-            });
+            $feed = $this->feedService->getSingleFeed($profile, $redisCache, $dto);
 
             return JsonResponse::fromJsonString(
                 $this->serializer->serialize($feed, 'json'),
+            );
+        } catch (FeedLimitException $e) {
+            return JsonResponse::fromJsonString(
+                $this->serializer->serialize(['msg' => 'Лимит поиска исчерпан, начните с начала, возможно появится кто-то новенький )'],
+                    'json'),
             );
         } catch (\Exception $e) {
             return JsonResponse::fromJsonString(

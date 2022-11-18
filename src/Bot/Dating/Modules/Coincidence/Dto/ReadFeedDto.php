@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Bot\Dating\Modules\Feed\Dto;
+namespace App\Bot\Dating\Modules\Coincidence\Dto;
 
 use App\Bot\Dating\Components\Dto\BaseDto;
 
