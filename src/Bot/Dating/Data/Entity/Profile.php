@@ -175,11 +175,17 @@ class Profile extends ArrayExpressible
      * @var Image[]|ArrayCollection
      *
      * @ORM\OneToMany(targetEntity="Image", mappedBy="profile", cascade={"persist", "remove"})
-     * @Serializer\Expose
-     * @Serializer\Accessor(setter="setImages")
-     * @Serializer\SerializedName("images")
      */
     protected Collection $images;
+
+    /**
+     * @var Coincidence[]|ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity="Coincidence", mappedBy="chooseProfile", cascade={"persist", "remove"})
+     *
+     * @ORM\OrderBy({"createdAt"="desc"})
+     */
+    protected Collection $coincidences;
 
     /**
      * @ORM\Column(type="smallint", nullable=true)
@@ -277,6 +283,7 @@ class Profile extends ArrayExpressible
         $this->tag = $tag?->value;
         $this->description = $description;
         $this->images = new ArrayCollection();
+        $this->coincidences = new ArrayCollection();
         $this->hobby = $hobby;
         $this->affiliateCode = Uuid::uuid4()->toString();
 
@@ -436,6 +443,16 @@ class Profile extends ArrayExpressible
         $this->images = $images;
     }
 
+    public function getCoincidences(): Collection
+    {
+        return $this->coincidences;
+    }
+
+    public function setCoincidences(Collection $coincidences): void
+    {
+        $this->coincidences = $coincidences;
+    }
+
     public function getDescription(): ?string
     {
         return $this->description;
@@ -473,9 +490,12 @@ class Profile extends ArrayExpressible
 
     public function addImage(Image $img): void
     {
-        $img->setProfile($this);
-
         $this->images[] = $img;
+    }
+
+    public function addCoincidence(Coincidence $coincidence): void
+    {
+        $this->coincidences[] = $coincidence;
     }
 
     public function calculateAge(\DateTime $birthDate): int

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Bot\Dating\Modules\Profile\Services;
 
 use App\Bot\Dating\Data\Entity\Profile;
+use App\Bot\Dating\Modules\Feed\Templates\FeedTemplate;
 use App\Bot\Dating\Modules\Horoscope\Enum\AstrologyHoroscope;
 use App\Bot\Dating\Modules\Horoscope\Enum\ChineseHoroscope;
 use App\Bot\Dating\Modules\Horoscope\Services\HoroscopeService;
@@ -183,5 +184,21 @@ class ProfileService
         $this->profileRepository->save($profile);
 
         return $profile;
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function getDataForTemplate(FeedTemplate $template, array $params): array
+    {
+        if ($template->isBaseTemplate()) {
+            return $this->profileRepository->getListForBaseTemplate($params);
+        }
+
+        if ($template->isPrivateTemplate()) {
+            return $this->profileRepository->getListForPrivateTemplate($params);
+        }
+
+        throw new \Exception('Template feed is not supported');
     }
 }

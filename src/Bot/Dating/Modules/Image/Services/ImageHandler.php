@@ -8,6 +8,7 @@ use App\Bot\Dating\Data\Entity\Image;
 use App\Bot\Dating\Data\Entity\Profile;
 use App\Bot\Dating\Modules\Image\Repository\ImageRepository;
 use App\Bot\Dating\Modules\Profile\Dto\CreateProfileDto;
+use App\Bot\Dating\Modules\Profile\Repository\ProfileRepository;
 use FilesystemIterator;
 
 class ImageHandler
@@ -15,7 +16,9 @@ class ImageHandler
     private const IMG_BASE_PATH = 'storage/photo';
     private const IMG_BASE_FORMAT = '.jpeg';
 
-    public function __construct(private ImageRepository $imageRepository
+    public function __construct(
+        private ImageRepository $imageRepository,
+        private ProfileRepository $profileRepository
     ) {
     }
 
@@ -25,6 +28,7 @@ class ImageHandler
         $newImage = $this->makeImage($dto, $profile);
 
         $profile->addImage($newImage);
+        $this->profileRepository->save($profile);
         //  логика по обрезке и декодированию и сохранению в стору исходя из пути
         $this->uploadImage($base64Content, $newImage);
     }

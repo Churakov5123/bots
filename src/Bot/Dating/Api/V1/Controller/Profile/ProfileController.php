@@ -184,4 +184,45 @@ class ProfileController extends AbstractController
             );
         }
     }
+
+    /**
+     * @Route("/who-like-you/{id}", methods={"GET"})
+     */
+    public function listWhoLikesYou(?string $id = null): JsonResponse
+    {
+        try {
+            $profile = $this->read($id);
+            // запрос на получиние данных
+
+            return JsonResponse::fromJsonString(
+                $this->serializer->serialize($profile, 'json'),
+            );
+        } catch (\Exception $e) {
+            return JsonResponse::fromJsonString(
+                $this->serializer->serialize($e->getMessage(), 'json'),
+                $e->getCode()
+            );
+        }
+    }
+
+    /**
+     * @Route("/who-you-like/{id}", methods={"GET"})
+     */
+    public function listWhoYouLke(?string $id = null): JsonResponse
+    {
+        try {
+            $profile = $this->read($id);
+
+            // запрос на получиние данных
+
+            return JsonResponse::fromJsonString(
+                $this->serializer->serialize($profile, 'json'),
+            );
+        } catch (\Exception $e) {
+            return JsonResponse::fromJsonString(
+                $this->serializer->serialize($e->getMessage(), 'json'),
+                $e->getCode()
+            );
+        }
+    }
 }

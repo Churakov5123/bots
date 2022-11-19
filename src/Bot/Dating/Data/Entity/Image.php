@@ -40,9 +40,10 @@ class Image
 
     /**
      * @ORM\ManyToOne(targetEntity="Profile", inversedBy="images", cascade={"persist", "remove"})
-     * @ORM\JoinColumn(name="profile_id", referencedColumnName="id")
+     *
+     * @Serializer\Expose
      */
-    protected $profile;
+    protected Profile $profile;
 
     public function __construct(string $name, string $path, Profile $profile)
     {

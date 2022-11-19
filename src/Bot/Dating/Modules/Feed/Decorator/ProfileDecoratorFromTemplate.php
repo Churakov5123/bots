@@ -28,6 +28,7 @@ class ProfileDecoratorFromTemplate
         $searchDiapazone = $this->profile->getSearchAgeDiapazone();
 
         return [
+            'id' => $this->profile->getId(),
             'images' => $this->profile->getImages(),
             'lastActivity' => $this->profile->getLastActivity(),
             'name' => $this->profile->getName(),
@@ -50,6 +51,7 @@ class ProfileDecoratorFromTemplate
         $searchDiapazone = $this->profile->getSearchAgeDiapazone();
 
         return [
+            'id' => $this->profile->getId(),
             'images' => $this->profile->getImages(),
             'lastActivity' => $this->profile->getLastActivity(),
             'name' => $this->profile->getName(),

@@ -12,8 +12,7 @@ use Ramsey\Uuid\Uuid;
 
 /**
  * @ORM\Table(indexes={
- *      @ORM\Index(columns={"choose_profile"}),
- *      @ORM\Index(columns={"chosen_profile"}),
+ *      @ORM\Index(columns={"created_at"}),
  * })
  *
  * @ORM\Entity(repositoryClass="App\Bot\Dating\Modules\Profile\Repository\CoincidenceRepository")
@@ -33,14 +32,14 @@ class Coincidence extends ArrayExpressible
     protected ?string $id = null;
 
     /**
-     * @ORM\Column(type="string", length=64, unique=true)
+     * @ORM\ManyToOne(targetEntity="Profile", inversedBy="coincidences", cascade={"persist", "remove"})
      *
      * @Serializer\Expose
      */
-    protected string $chooseProfile;
+    protected Profile $chooseProfile;
 
     /**
-     * @ORM\Column(type="string", length=64, unique=true)
+     * @ORM\Column(type="string", length=255)
      *
      * @Serializer\Expose
      */
@@ -61,8 +60,40 @@ class Coincidence extends ArrayExpressible
     protected \DateTimeImmutable $createdAt;
 
     public function __construct(
+        Profile $chooseProfile,
+        string $chosenProfile,
+        bool $like
     ) {
+        $this->chooseProfile = $chooseProfile;
+        $this->chosenProfile = $chosenProfile;
+        $this->like = $like;
+
         $this->createdAt = new \DateTimeImmutable();
+    }
+
+    public function getChooseProfile(): Profile
+    {
+        return $this->chooseProfile;
+    }
+
+    public function setChooseProfile(Profile $chooseProfile): void
+    {
+        $this->chooseProfile = $chooseProfile;
+    }
+
+    public function getChosenProfile(): string
+    {
+        return $this->chosenProfile;
+    }
+
+    public function setChosenProfile(string $chosenProfile): void
+    {
+        $this->chosenProfile = $chosenProfile;
+    }
+
+    public function isLike(): bool
+    {
+        return $this->like;
     }
 
     public function getCreatedAt(): \DateTimeImmutable

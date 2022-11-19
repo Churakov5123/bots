@@ -11,7 +11,7 @@ use App\Bot\Dating\Modules\Feed\Exceptions\FeedLimitException;
 use App\Bot\Dating\Modules\Feed\Factory\TemplateFactory;
 use App\Bot\Dating\Modules\Feed\Templates\FeedTemplate;
 use App\Bot\Dating\Modules\Profile\Enum\SearchMode;
-use App\Bot\Dating\Modules\Profile\Repository\ProfileRepository;
+use App\Bot\Dating\Modules\Profile\Services\ProfileService;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 
@@ -19,7 +19,7 @@ class FeedService
 {
     public function __construct(
         private TemplateFactory $templateFactory,
-        private ProfileRepository $profileRepository,
+        private ProfileService $profileService,
         private CoincidenceService $coincidenceService,
     ) {
     }
@@ -64,7 +64,7 @@ class FeedService
         $feed = $feeds[$count];
         $next = ++$count;
 
-        $this->coincidenceService->makeMatch($dto);
+        $this->coincidenceService->makeCoincidence($profile, $dto);
 
         $redisCache->delete(sprintf('%s_%s', 'count', $profile->getId()));
         $redisCache->get(sprintf('%s_%s', 'count', $profile->getId()), function (ItemInterface $item) use ($next): int {
@@ -77,32 +77,12 @@ class FeedService
     }
 
     /**
-     * В зависимости от того какой шаблон - такой заранее будет запрос в
-     * базу данных - с филтрацией на пол и интерс приватоного, и все остальное для базового.
-     * Режим не будет учитываться в заапросе - только тип анкеты если это привтный ( поиск ).
-     *
      * @throws \Exception
      */
     private function getDataForFeed(array $params, FeedTemplate $template): array
     {
-        $data = $this->getDataForTemplate($template, $params);
+        $data = $this->profileService->getDataForTemplate($template, $params);
 
         return $template->prepareData($data);
-    }
-
-    /**
-     * @throws \Exception
-     */
-    private function getDataForTemplate(FeedTemplate $template, array $params): array
-    {
-        if ($template->isBaseTemplate()) {
-            return $this->profileRepository->getListForBaseTemplate($params);
-        }
-
-        if ($template->isPrivateTemplate()) {
-            return $this->profileRepository->getListForPrivateTemplate($params);
-        }
-
-        throw new \Exception('Template feed is not supported');
     }
 }
