@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Bot\Dating\Api\V1\Controller\Statistic;
 
+use App\Bot\Dating\Modules\Statistic\Services\StatisticService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,12 +16,10 @@ use Symfony\Component\Serializer\SerializerInterface;
  */
 class StatisticController extends AbstractController
 {
-    private SerializerInterface $serializer;
-
     public function __construct(
-        SerializerInterface $serializer,
+       private SerializerInterface $serializer,
+       private StatisticService $statisticService
     ) {
-        $this->serializer = $serializer;
     }
 
     /**
