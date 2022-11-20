@@ -31,14 +31,4 @@ class StatisticController extends AbstractController
             $this->serializer->serialize(['statistic' => 45], 'json')
         );
     }
-
-    /**
-     * @Route("/{id}", methods={"GET"})
-     */
-    public function read(Request $request): JsonResponse
-    {
-        return JsonResponse::fromJsonString(
-            $this->serializer->serialize(['statistic' => 45], 'json')
-        );
-    }
 }

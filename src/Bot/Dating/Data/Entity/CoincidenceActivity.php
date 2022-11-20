@@ -15,11 +15,11 @@ use Ramsey\Uuid\Uuid;
  *      @ORM\Index(columns={"created_at"}),
  * })
  *
- * @ORM\Entity(repositoryClass="App\Bot\Dating\Modules\Profile\Repository\CoincidenceRepository")
+ * @ORM\Entity(repositoryClass="App\Bot\Dating\Modules\Profile\Repository\CoincidenceActivityRepository")
  *
  * @Serializer\ExclusionPolicy("all")
  */
-class Coincidence extends ArrayExpressible
+class CoincidenceActivity extends ArrayExpressible
 {
     /**
      * @var \Ramsey\Uuid\UuidInterface
@@ -32,7 +32,7 @@ class Coincidence extends ArrayExpressible
     protected ?string $id = null;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Profile", inversedBy="coincidences", cascade={"persist", "remove"})
+     * @ORM\ManyToOne(targetEntity="Profile", inversedBy="coincidenceActivities", cascade={"persist", "remove"})
      *
      * @Serializer\Expose
      */

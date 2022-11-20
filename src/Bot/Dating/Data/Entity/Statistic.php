@@ -50,6 +50,13 @@ class Statistic extends ArrayExpressible
      *
      * @Serializer\Expose
      */
+    protected int $matchCount = 0;
+
+    /**
+     * @ORM\Column(type="integer")
+     *
+     * @Serializer\Expose
+     */
     protected int $todayRealCount = 0;
 
     /**
@@ -58,6 +65,13 @@ class Statistic extends ArrayExpressible
      * @Serializer\Expose
      */
     protected int $todayFakeCount = 0;
+
+    /**
+     * @ORM\Column(type="integer")
+     *
+     * @Serializer\Expose
+     */
+    protected int $todayMatchCount = 0;
 
     /**
      * @ORM\Column(type="datetime_immutable")
@@ -119,6 +133,26 @@ class Statistic extends ArrayExpressible
     public function setTodayFakeCount(int $todayFakeCount): void
     {
         $this->todayFakeCount = $todayFakeCount;
+    }
+
+    public function getMatchCount(): int
+    {
+        return $this->matchCount;
+    }
+
+    public function setMatchCount(int $matchCount): void
+    {
+        $this->matchCount = $matchCount;
+    }
+
+    public function getTodayMatchCount(): int
+    {
+        return $this->todayMatchCount;
+    }
+
+    public function setTodayMatchCount(int $todayMatchCount): void
+    {
+        $this->todayMatchCount = $todayMatchCount;
     }
 
     public function getCreatedAt(): \DateTimeImmutable

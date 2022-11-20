@@ -179,13 +179,13 @@ class Profile extends ArrayExpressible
     protected Collection $images;
 
     /**
-     * @var Coincidence[]|ArrayCollection
+     * @var CoincidenceActivity[]|ArrayCollection
      *
-     * @ORM\OneToMany(targetEntity="Coincidence", mappedBy="chooseProfile", cascade={"persist", "remove"})
+     * @ORM\OneToMany(targetEntity="CoincidenceActivity", mappedBy="chooseProfile", cascade={"persist", "remove"})
      *
      * @ORM\OrderBy({"createdAt"="desc"})
      */
-    protected Collection $coincidences;
+    protected Collection $coincidenceActivities;
 
     /**
      * @ORM\Column(type="smallint", nullable=true)
@@ -283,7 +283,7 @@ class Profile extends ArrayExpressible
         $this->tag = $tag?->value;
         $this->description = $description;
         $this->images = new ArrayCollection();
-        $this->coincidences = new ArrayCollection();
+        $this->coincidenceActivities = new ArrayCollection();
         $this->hobby = $hobby;
         $this->affiliateCode = Uuid::uuid4()->toString();
 
@@ -443,14 +443,14 @@ class Profile extends ArrayExpressible
         $this->images = $images;
     }
 
-    public function getCoincidences(): Collection
+    public function getCoincidenceActivities(): Collection
     {
-        return $this->coincidences;
+        return $this->coincidenceActivities;
     }
 
-    public function setCoincidences(Collection $coincidences): void
+    public function setCoincidenceActivities(Collection $coincidenceActivities): void
     {
-        $this->coincidences = $coincidences;
+        $this->coincidenceActivities = $coincidenceActivities;
     }
 
     public function getDescription(): ?string
@@ -493,9 +493,9 @@ class Profile extends ArrayExpressible
         $this->images[] = $img;
     }
 
-    public function addCoincidence(Coincidence $coincidence): void
+    public function addCoincidenceActivities(CoincidenceActivity $coincidenceActivities): void
     {
-        $this->coincidences[] = $coincidence;
+        $this->coincidenceActivities[] = $coincidenceActivities;
     }
 
     public function calculateAge(\DateTime $birthDate): int

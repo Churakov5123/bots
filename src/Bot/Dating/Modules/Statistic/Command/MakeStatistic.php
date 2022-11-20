@@ -45,8 +45,6 @@ class MakeStatistic extends Command
             return 1;
         }
 
-        $output->write(sprintf('%s - profile was created', $count), true);
-
         $this->release();
 
         return 0;

@@ -64,7 +64,7 @@ class FeedService
         $feed = $feeds[$count];
         $next = ++$count;
 
-        $this->coincidenceService->makeCoincidence($profile, $dto);
+        $this->coincidenceService->makeCoincidenceActivity($profile, $dto);
 
         $redisCache->delete(sprintf('%s_%s', 'count', $profile->getId()));
         $redisCache->get(sprintf('%s_%s', 'count', $profile->getId()), function (ItemInterface $item) use ($next): int {
