@@ -188,6 +188,15 @@ class Profile extends ArrayExpressible
     protected Collection $coincidenceActivities;
 
     /**
+     * @var Coincidence[]|ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity="Coincidence", mappedBy="chooseProfile", cascade={"persist", "remove"})
+     *
+     * @ORM\OrderBy({"createdAt"="desc"})
+     */
+    protected Collection $coincidences;
+
+    /**
      * @ORM\Column(type="smallint", nullable=true)
      * @Assert\Choice(callback={"App\Bot\Dating\Modules\Profile\Enum\Hobby", "Hobby::cases()"})
      *
@@ -284,6 +293,7 @@ class Profile extends ArrayExpressible
         $this->description = $description;
         $this->images = new ArrayCollection();
         $this->coincidenceActivities = new ArrayCollection();
+        $this->coincidences = new ArrayCollection();
         $this->hobby = $hobby;
         $this->affiliateCode = Uuid::uuid4()->toString();
 
@@ -453,6 +463,16 @@ class Profile extends ArrayExpressible
         $this->coincidenceActivities = $coincidenceActivities;
     }
 
+    public function getCoincidences(): Collection
+    {
+        return $this->coincidences;
+    }
+
+    public function setCoincidences(Collection $coincidences): void
+    {
+        $this->coincidences = $coincidences;
+    }
+
     public function getDescription(): ?string
     {
         return $this->description;
@@ -496,6 +516,11 @@ class Profile extends ArrayExpressible
     public function addCoincidenceActivities(CoincidenceActivity $coincidenceActivities): void
     {
         $this->coincidenceActivities[] = $coincidenceActivities;
+    }
+
+    public function addCoincidences(Coincidence $coincidence): void
+    {
+        $this->coincidences[] = $coincidence;
     }
 
     public function calculateAge(\DateTime $birthDate): int
