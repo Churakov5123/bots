@@ -46,6 +46,13 @@ class Coincidence extends ArrayExpressible
     protected string $chosenProfile;
 
     /**
+     * @ORM\Column(name="is_send", type="boolean")
+     *
+     * @Serializer\Expose
+     */
+    protected bool $send;
+
+    /**
      * @ORM\Column(type="datetime_immutable")
      *
      * @Serializer\Expose
@@ -58,8 +65,14 @@ class Coincidence extends ArrayExpressible
     ) {
         $this->chooseProfile = $chooseProfile;
         $this->chosenProfile = $chosenProfile;
+        $this->send = false;
 
         $this->createdAt = new \DateTimeImmutable();
+    }
+
+    public function getId(): ?string
+    {
+        return $this->id;
     }
 
     public function getChooseProfile(): Profile
@@ -80,6 +93,16 @@ class Coincidence extends ArrayExpressible
     public function setChosenProfile(string $chosenProfile): void
     {
         $this->chosenProfile = $chosenProfile;
+    }
+
+    public function isSend(): bool
+    {
+        return $this->send;
+    }
+
+    public function setSend(bool $send): void
+    {
+        $this->send = $send;
     }
 
     public function getCreatedAt(): \DateTimeImmutable

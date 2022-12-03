@@ -14,7 +14,7 @@ class PrivateTemplateFeed extends AbstractTemplateFeed
         return AdForPrivetMode::ADS;
     }
 
-    protected function prepareProfile(Profile $profile, Profile $profileOwner): array
+    public function prepareProfile(Profile $profile, Profile $profileOwner): array
     {
         return $this->transformProfile($profile, $profileOwner)->getProfileForPrivateTemplate();
     }

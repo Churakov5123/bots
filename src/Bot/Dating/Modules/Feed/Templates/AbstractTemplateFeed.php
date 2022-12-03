@@ -27,7 +27,7 @@ abstract class AbstractTemplateFeed implements FeedTemplate
 
     abstract protected function getAdvertSet(): array;
 
-    abstract protected function prepareProfile(Profile $profile, Profile $profileOwner): array;
+    abstract public function prepareProfile(Profile $profile, Profile $profileOwner): array;
 
     public function getAdvert(int $number): string
     {
