@@ -32,11 +32,19 @@ class CoincidenceService
         }
     }
 
+    public function getNotSendMatches(): array
+    {
+        return $this->coincidenceRepository->getNotSendMatches();
+    }
+
     public function calculateCoincidences(): void
     {
         // оптимизировть итераторами - чтоб небвло переполнения по памяти.
-        $coincidenceActivitiesLastFiftyMinutes = $this->coincidenceActivityRepository->getAllByLastFiftyMinutes(); // с группированный по всем выбирающим юрезмерам! за последние 30 минут
-        $coincidenceActivitiesLastMonth = $this->coincidenceActivityRepository->getAllByLastMonth(); // с группированный по всем выбирающим юрезмерам! за последний месяц
+        $coincidenceActivitiesLastFiftyMinutes = $this->coincidenceActivityRepository->getAllByLastFiftyMinutes();
+        $coincidenceActivitiesLastFiftyMinutes = $this->prepareCoincidence($coincidenceActivitiesLastFiftyMinutes);
+
+        $coincidenceActivitiesLastMonth = $this->coincidenceActivityRepository->getAllByLastMonth();
+        $coincidenceActivitiesLastMonth = $this->prepareCoincidence($coincidenceActivitiesLastMonth);
 
         foreach ($coincidenceActivitiesLastFiftyMinutes as $coincidenceActivities) {
             /** @var CoincidenceActivity $coincidenceActivity */
@@ -79,5 +87,16 @@ class CoincidenceService
         }
 
         return false;
+    }
+
+    private function prepareCoincidence(array $items): array
+    {
+        $result = [];
+
+        foreach ($items as $item) {
+            $result[$item->getChooseProfile()->getId()][] = $item;
+        }
+
+        return $result;
     }
 }

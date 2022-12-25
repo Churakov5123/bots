@@ -41,15 +41,14 @@ class CoincidenceActivityRepository extends ServiceEntityRepository
             ->where('t.createdAt >= :interval')
             ->andWhere('t.createdAt <= :now')
             ->setParameters([
-                'interval' => (new \DateTimeImmutable())->add(
-                    new \DateInterval('30m')
-                ), // minuse 30min
+                'interval' => (new \DateTimeImmutable())->sub(
+                    new \DateInterval('P0Y0DT0H15M')
+                ),
                 'now' => new \DateTimeImmutable(),
             ])
             ->orderBy('t.createdAt', 'DESC')
-            ->groupBy('t.groupBy')
             ->getQuery()
-            ->getScalarResult();
+            ->getResult();
     }
 
     /**
@@ -64,14 +63,13 @@ class CoincidenceActivityRepository extends ServiceEntityRepository
             ->where('t.createdAt >= :interval')
             ->andWhere('t.createdAt <= :now')
             ->setParameters([
-                'interval' => (new \DateTimeImmutable())->add(
-                    new \DateInterval('1month')
-                ), // minuse 1 month
+                'interval' => (new \DateTimeImmutable())->sub(
+                    new \DateInterval('P0Y01M0DT0H0M')
+                ),
                 'now' => new \DateTimeImmutable(),
             ])
             ->orderBy('t.createdAt', 'DESC')
-            ->groupBy('t.groupBy')
             ->getQuery()
-            ->getScalarResult();
+            ->getResult();
     }
 }

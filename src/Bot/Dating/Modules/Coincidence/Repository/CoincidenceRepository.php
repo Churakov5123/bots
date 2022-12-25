@@ -22,6 +22,22 @@ class CoincidenceRepository extends ServiceEntityRepository
         $em->flush($coincidence);
     }
 
+    /**
+     * @return Coincidence[]
+     */
+    public function getNotSendMatches(): array
+    {
+        return $this
+            ->createQueryBuilder('t')
+            ->where('t.send = :send')
+            ->setParameters([
+                'send' => true,
+            ])
+            ->orderBy('t.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
     public function save(Coincidence $coincidence): void
     {
         $em = $this->getEntityManager();

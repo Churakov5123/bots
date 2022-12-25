@@ -5,37 +5,26 @@ declare(strict_types=1);
 namespace App\Bot\Dating\Modules\Coincidence\Services;
 
 use App\Bot\Dating\Data\Entity\Coincidence;
-use App\Bot\Dating\Modules\Coincidence\Repository\CoincidenceRepository;
-use App\Bot\Dating\Modules\Feed\Factory\TemplateFactory;
 
 class CoincidenceAnalyzeProcessor
 {
     public function __construct(
-        private CoincidenceRepository $coincidenceRepository,
-        private TemplateFactory $templateFactory,
+        private CoincidenceService $coincidenceService,
     ) {
     }
 
     public function execute(): void
     {
-        $coincidences = $this->coincidenceRepository->getNotSendedCoincidences();
+        $this->coincidenceService->calculateCoincidences();
+        $matches = $this->coincidenceService->getNotSendMatches();
 
-        if (empty($coincidences)) {
+        if (empty($matches)) {
             return;
         }
-        /** @var Coincidence $coincidence */
-        foreach ($coincidences as $coincidence) {
-            // отправлять нотификацию мы будем  id совпадения $coincidence->getId()
-            // Делаем отправку в очерь  Рэбита сообщений $coincidence->getId() !
 
-            // эта логика будет в  обработчике
-//            $template = $this->templateFactory->getTemplate(
-//                $coincidence->getChooseProfile()->getSearchMode(),
-//                $coincidence->getChooseProfile()
-//            );
-//
-//            $match = $template->prepareProfile(); //датасет совпадения пары
-//            $coincidence->getChooseProfile()->getId() // id получателя
+        /** @var Coincidence $match */
+        foreach ($matches as $match) {
+            // отправляем в очередь рэбита на отпрвку нотификаций ( и после изменение статуса на отправленное!
         }
     }
 }

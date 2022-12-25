@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Bot\Dating\Modules\Coincidence\Command;
 
+use App\Bot\Dating\Modules\Coincidence\Services\CoincidenceAnalyzeProcessor;
 use App\Bot\Dating\Modules\Coincidence\Services\CoincidenceService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Command\LockableTrait;
@@ -15,7 +16,8 @@ class SearchCoincidenceAndNotifyUserCommand extends Command
     use LockableTrait;
 
     public function __construct(
-        private CoincidenceService $coincidenceService
+        private CoincidenceService $coincidenceService,
+        private CoincidenceAnalyzeProcessor $coincidenceAnalyzeProcessor
     ) {
         parent::__construct();
     }
@@ -40,9 +42,8 @@ class SearchCoincidenceAndNotifyUserCommand extends Command
 
             return 1;
         }
-        $this->coincidenceService->calculateCoincidences();
 
-        $this->notifyUserAboutCoincidence();
+        $this->coincidenceAnalyzeProcessor->execute();
 
         $output->write('All done.');
 
