@@ -38,6 +38,22 @@ class CoincidenceRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function getCreatedMatchByCurrentTime(\DateTimeImmutable $time): array
+    {
+        return $this
+            ->createQueryBuilder('t')
+            ->andWhere('t.createdAt >= :start_date')
+            ->andWhere('t.createdAt <= :end_date')
+            ->setParameters(
+                [
+                    'start_date', $time->modify('00:00:00'),
+                    'end_date', $time->modify('23:59:59'),
+                ]
+            )
+            ->getQuery()
+            ->getResult();
+    }
+
     public function save(Coincidence $coincidence): void
     {
         $em = $this->getEntityManager();

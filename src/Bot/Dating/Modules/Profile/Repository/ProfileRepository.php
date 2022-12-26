@@ -15,9 +15,38 @@ class ProfileRepository extends ServiceEntityRepository
         parent::__construct($registry, Profile::class);
     }
 
-    /**
-     * Точечный приватный поиск по тегу (совпадению пары и тега).
-     */
+    public function getCreatedProfileByCurrentTime(\DateTimeImmutable $time, bool $isFake): array
+    {
+        return $this
+            ->createQueryBuilder('t')
+            ->andWhere('t.createdAt >= :start_date')
+            ->andWhere('t.createdAt <= :end_date')
+            ->andWhere('t.fake = :fake')
+            ->setParameters(
+                [
+                    'start_date', $time->modify('00:00:00'),
+                    'end_date', $time->modify('23:59:59'),
+                    'fake' => $isFake,
+                ]
+            )
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function getCreatedProfileBySign(bool $isFake): array
+    {
+        return $this
+            ->createQueryBuilder('t')
+            ->andWhere('t.fake = :fake')
+            ->setParameters(
+                [
+                    'fake' => $isFake,
+                ]
+            )
+            ->getQuery()
+            ->getResult();
+    }
+
     public function getListForPrivateTemplate(array $param): array
     {
         return $this
@@ -41,9 +70,6 @@ class ProfileRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    /**
-     * Базовый поиск.
-     */
     public function getListForBaseTemplate(array $param): array
     {
         return $this

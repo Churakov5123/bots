@@ -4,22 +4,18 @@ declare(strict_types=1);
 
 namespace App\Bot\Dating\Modules\Statistic\Command;
 
-use App\Bot\Dating\Modules\Profile\Command\FakeData\FakeProfile;
-use App\Bot\Dating\Modules\Profile\Services\ProfileService;
+use App\Bot\Dating\Modules\Statistic\Services\StatisticService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Command\LockableTrait;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class MakeStatistic extends Command
+class MakeStatisticCommand extends Command
 {
     use LockableTrait;
 
-    private const BASE_COUNT_PROFILES = 1000;
-
     public function __construct(
-        private FakeProfile $fakeProfile,
-        private ProfileService $profileService,
+        private StatisticService $statisticService,
     ) {
         parent::__construct();
     }
@@ -30,8 +26,8 @@ class MakeStatistic extends Command
     protected function configure(): void
     {
         $this
-            ->setName('profile:generate')
-            ->setDescription('Generates a pack of 50 different profiles for each gender .');
+            ->setName('statistic:make')
+            ->setDescription('Make statistic for each day');
     }
 
     /**
@@ -44,6 +40,8 @@ class MakeStatistic extends Command
 
             return 1;
         }
+
+        $this->statisticService->makeNewStatistic();
 
         $this->release();
 
