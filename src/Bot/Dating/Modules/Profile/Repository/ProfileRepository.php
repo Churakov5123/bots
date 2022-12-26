@@ -19,16 +19,12 @@ class ProfileRepository extends ServiceEntityRepository
     {
         return $this
             ->createQueryBuilder('t')
+            ->where('t.fake = :fake')
+            ->setParameter('fake', $isFake)
             ->andWhere('t.createdAt >= :start_date')
             ->andWhere('t.createdAt <= :end_date')
-            ->andWhere('t.fake = :fake')
-            ->setParameters(
-                [
-                    'start_date', $time->modify('00:00:00'),
-                    'end_date', $time->modify('23:59:59'),
-                    'fake' => $isFake,
-                ]
-            )
+            ->setParameter('start_date', $time->modify('00:00:00'))
+            ->setParameter('end_date', $time->modify('23:59:59'))
             ->getQuery()
             ->getResult();
     }

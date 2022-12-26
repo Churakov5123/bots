@@ -46,8 +46,8 @@ class CoincidenceRepository extends ServiceEntityRepository
             ->andWhere('t.createdAt <= :end_date')
             ->setParameters(
                 [
-                    'start_date', $time->modify('00:00:00'),
-                    'end_date', $time->modify('23:59:59'),
+                    'start_date' => $time->modify('00:00:00'),
+                    'end_date' => $time->modify('23:59:59'),
                 ]
             )
             ->getQuery()

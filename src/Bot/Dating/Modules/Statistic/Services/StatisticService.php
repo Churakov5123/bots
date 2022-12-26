@@ -33,19 +33,14 @@ class StatisticService
         $realProfilesCount = count($this->profileRepository->getCreatedProfileBySign(false));
         $fakeProfilesCount = count($this->profileRepository->getCreatedProfileBySign(true));
 
-        try {
-            $todayRealCount = count($this->profileRepository->getCreatedProfileByCurrentTime(
-                new \DateTimeImmutable(),
-                false )
-            );
-            $todayFakeCount = count($this->profileRepository->getCreatedProfileByCurrentTime(
-                new \DateTimeImmutable(),
-                true
-            )
-            );
-        }catch (\Exception $e) {
-            dd($e);
-        }
+        $todayRealCount = count($this->profileRepository->getCreatedProfileByCurrentTime(
+            new \DateTimeImmutable(),
+            false)
+        );
+        $todayFakeCount = count($this->profileRepository->getCreatedProfileByCurrentTime(
+            new \DateTimeImmutable(),
+            true)
+        );
 
         $coincidencesCount = count($this->coincidenceRepository->findAll());
         $todayCoincidencesCount = count($this->coincidenceRepository->getCreatedMatchByCurrentTime(new \DateTimeImmutable()));
