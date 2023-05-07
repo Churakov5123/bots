@@ -10,6 +10,7 @@ class CoincidenceAnalyzeProcessor
 {
     public function __construct(
         private CoincidenceService $coincidenceService,
+        private CoincidenceNotificationSender $notificationSender,
     ) {
     }
 
@@ -24,7 +25,7 @@ class CoincidenceAnalyzeProcessor
 
         /** @var Coincidence $match */
         foreach ($matches as $match) {
-            // отправляем в очередь рэбита на отпрвку нотификаций ( и после изменение статуса на отправленное!
+            $this->notificationSender->execute($match);
         }
     }
 }

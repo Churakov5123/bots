@@ -68,6 +68,13 @@ services:
             - php-fpm
         networks:
             - internal
+    cron:
+        image: alpine:latest
+        command: [ "crond", "-f", "-d", "8" ]
+        volumes:
+            - ./docker/cron/conf.d:/etc/cron.d
+        networks:
+            - internal
 networks:
     internal:
         driver: bridge

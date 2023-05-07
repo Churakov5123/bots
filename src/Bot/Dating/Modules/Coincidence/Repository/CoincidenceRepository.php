@@ -31,7 +31,7 @@ class CoincidenceRepository extends ServiceEntityRepository
             ->createQueryBuilder('t')
             ->where('t.send = :send')
             ->setParameters([
-                'send' => true,
+                'send' => false,
             ])
             ->orderBy('t.createdAt', 'DESC')
             ->getQuery()

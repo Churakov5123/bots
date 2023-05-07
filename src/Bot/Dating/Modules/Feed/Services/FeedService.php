@@ -83,6 +83,6 @@ class FeedService
     {
         $data = $this->profileService->getDataForTemplate($template, $params);
 
-        return $template->prepareData($data);
+        return $template->prepareProfiles($data);
     }
 }

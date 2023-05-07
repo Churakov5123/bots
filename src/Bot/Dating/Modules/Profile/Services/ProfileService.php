@@ -15,6 +15,21 @@ use App\Bot\Dating\Modules\Profile\Dto\ProfileDto;
 use App\Bot\Dating\Modules\Profile\Repository\ProfileRepository;
 use Exception;
 
+/**
+ * This class is responsible for creating, reading, updating, and deleting dating profiles in the system.
+ *
+ * In the make() method, a new Profile is created and saved to the database. It contains information about the user's name, birth date, horoscope, location, gender, images, and other profile details.
+ *
+ * The update() method updates the user's profile in the database with new information.
+ *
+ * The read() method returns a Profile object with the specified ID.
+ *
+ * The deactivate() and activate() methods change the active flag of the profile to false or true, respectively.
+ *
+ * Finally, the delete() method removes the profile from the database.
+ *
+ * Note that the code also includes some error handling with Exception thrown when necessary.
+ */
 class ProfileService
 {
     public function __construct(

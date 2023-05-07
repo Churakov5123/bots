@@ -11,6 +11,13 @@ use App\Bot\Dating\Modules\Profile\Dto\CreateProfileDto;
 use App\Bot\Dating\Modules\Profile\Repository\ProfileRepository;
 use FilesystemIterator;
 
+/**
+ * The class takes two dependencies in its constructor: an ImageRepository and a ProfileRepository.
+ * The execute method is the main method of the class, which is responsible for adding a new image to a user's profile. It takes three parameters: a Profile object representing the user's profile, a CreateProfileDto object representing the details of the profile, and a string containing the base64-encoded content of the image.
+ * The method first creates a new Image object using the makeImage method, which generates a unique name and path for the image file and saves it to the ImageRepository.
+ * The Image object is then added to the user's profile using the addImage method, and the profile is saved to the ProfileRepository.
+ * Finally, the uploadImage method is called to decode and save the image file to the server at the specified path.
+ */
 class ImageHandler
 {
     private const IMG_BASE_PATH = 'storage/photo';

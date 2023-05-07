@@ -34,7 +34,7 @@ abstract class AbstractTemplateFeed implements FeedTemplate
         return $this->getAdvertSet()[$number];
     }
 
-    public function prepareData(array $profiles): array
+    public function prepareProfiles(array $profiles): array
     {
         $count = 0;
         $advertCount = 0;
@@ -55,6 +55,11 @@ abstract class AbstractTemplateFeed implements FeedTemplate
         }
 
         return $result;
+    }
+
+    public function prepareCoincidenceProfile(Profile $profile): array
+    {
+        return $this->prepareProfile($profile, $this->profileOwner);
     }
 
     public function getAdvertCount(): int

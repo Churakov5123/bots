@@ -43,7 +43,8 @@
         "symfony/string": "6.1.*",
         "symfony/validator": "6.1.*",
         "symfony/web-link": "6.1.*",
-        "symfony/yaml": "*"
+        "symfony/yaml": "*",
+        "telegram-bot/api": "^2.3"
     },
     "config": {
         "allow-plugins": {
